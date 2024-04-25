@@ -33,7 +33,7 @@ const Navbar = () => {
               <Link className="nav-link" to="/project">Project</Link>
             </li>
           </ul>
-          <div className="d-flex text-end">
+          <div className="d-flex ">
             <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
             <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
           </div>
