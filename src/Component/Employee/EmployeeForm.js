@@ -26,6 +26,8 @@ const EmployeeForm = () => {
     ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -39,11 +41,12 @@ const EmployeeForm = () => {
     const isFormValid = validateForm();
     if (isFormValid) {
       try {
-        const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/CreateNewEmployee", formData);
-        if (result.data.data) {
-          alert("Data saved successfully");
+        if (!isEditing) {
+          // If not in editing mode, call SaveEmployee
+          await SaveEmployee();
         } else {
-          alert(result.message);
+          // If in editing mode, perform other action
+          console.log("Update action");
         }
       } catch (error) {
         console.error("Error:", error);
@@ -53,6 +56,8 @@ const EmployeeForm = () => {
       console.log('Form validation failed');
     }
   };
+
+ 
 
   const validateForm = () => {
     let isProceed = true;
@@ -80,10 +85,63 @@ const EmployeeForm = () => {
     }
     if (!empContactNo) {
       isProceed = false;
+      errorMessage += 'empContactNo, ';
+    }
+    if (!empAltContactNo) {
+      isProceed = false;
+      errorMessage += 'empAltContactNo, ';
+    }
+    if (!empPersonalEmailId) {
+      isProceed = false;
+      errorMessage += 'empPersonalEmailId, ';
+    }
+    if (! empExpTotalYear) {
+      isProceed = false;
+      errorMessage += 'empExpTotalYear, ';
+    }
+    
+    if (! empExpTotalMonth) {
+      isProceed = false;
+      errorMessage += 'empExpTotalMonth, ';
+    }
+    if (! empCity) {
+      isProceed = false;
+      errorMessage += 'empCity, ';
+    }
+    if (! empState) {
+      isProceed = false;
+      errorMessage += 'empState, ';
+    }
+    if (! empPinCode) {
+      isProceed = false;
       errorMessage += 'Contact No, ';
     }
+    if (! empAddress) {
+      isProceed = false;
+      errorMessage += 'empAddress, ';
+    }
+    if (!empPerCity) {
+      isProceed = false;
+      errorMessage += 'empPerCity, ';
+    }
    
-
+    if (! empPerState) {
+      isProceed = false;
+      errorMessage += 'empPerState, ';
+    }
+    if (! empPerPinCode) {
+      isProceed = false;
+      errorMessage += 'empPerPinCode, ';
+    }
+   
+    if (!  empPerAddress) {
+      isProceed = false;
+      errorMessage += 'empPerAddress, ';
+    }
+    if (!  password) {
+      isProceed = false;
+      errorMessage += 'password, ';
+    }
     if (!isProceed) {
       errorMessage = errorMessage.slice(0, -2); // Remove the last comma and space
       alert(errorMessage);
@@ -302,18 +360,18 @@ const EmployeeForm = () => {
               </Row>
             ))}
                <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
-          <div className='row'>
-            <div className='col-3'>
-            <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
-            </div>
-            <div className='col-3'>
-            <Button variant="warning" type="submit">Update</Button>
-            </div>
-            <div className='col-3'>
-            <Button variant="danger" type="submit">Cancel</Button>
-            </div>
-          </div>
+            <div className='row'>
+              <div className='col-3'>
+                <Button variant="primary" type="submit" >{isEditing ? 'Update' : 'Save'}</Button>
+              </div>
+              {!isEditing && (
+                <div className='col-3'>
+                  <Button variant="danger" type="button" onClick={() => setFormData({...formData, userName: ''})}>Cancel</Button>
+                </div>)
+}
+</div>
         </card-footer>
+
           </Form>
         </Card.Body>
       </Card>
