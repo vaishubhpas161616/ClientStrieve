@@ -1,15 +1,15 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const Employee = () => {
   const navigate = useNavigate();
+  const [empList, setEmpList] = useState('');
+ 
 
   useEffect(() => {
     getAllEmp();
-    getAllRole();
-    getAllDesignation();
   }, [])
 
   const getAllEmp = async () => {
@@ -20,21 +20,7 @@ const Employee = () => {
     });
   }
 
-  const getAllRole=async()=>{
-    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllPayments',{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
-      }
-    });
-  }
-
-  const getAllDesignation= async()=>{
-    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
-      }
-    });
-  }
+ 
   const handleAddEmployee = () => {
     navigate('/employee-form');
   };

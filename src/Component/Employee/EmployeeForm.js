@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
+    roleId: 0,
     userName: '',
     empCode: '',
     empName: '',
     empEmailId: '',
+    empDesignationId:0,
     empContactNo: '',
     empAltContactNo: '',
     empPersonalEmailId: '',
@@ -26,6 +29,10 @@ const EmployeeForm = () => {
     ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
 
+  const [rollName, setRollName]= useState('');
+  console.log(rollName);
+  const [designation, setDesignation]= useState('')
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -33,6 +40,36 @@ const EmployeeForm = () => {
       [name]: value
     });
   };
+
+  useEffect(()=>{
+    getAllRole();
+    getAllDesignation();
+  },[]);
+
+  const getAllRole = async () => {
+    try {
+      const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+        }
+      });
+      setRollName(response.data.data);
+      
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      // Handle error
+    }
+  }
+
+  const getAllDesignation= async()=>{
+    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllDesignation',{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
+      }
+    });
+    console.log(response)
+    setDesignation(response.data.data);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,41 +92,108 @@ const EmployeeForm = () => {
   };
 
   const validateForm = () => {
-    let isProceed = true;
+    let isValid = true;
     let errorMessage = "Please enter the value in ";
-    const { userName, empCode, empName, empEmailId, empContactNo, empAltContactNo, empPersonalEmailId, empExpTotalYear, empExpTotalMonth, empCity, empState, empPinCode, empAddress, empPerCity, empPerState, empPerPinCode, empPerAddress, password } = formData;
 
-    if (!userName) {
-      isProceed = false;
+    if (!formData.userName) {
+      isValid = false;
       errorMessage += 'User Name, ';
     }
-    if (!empCode) {
-      isProceed = false;
+    if (!formData.empCode) {
+      isValid = false;
       errorMessage += 'Employee Code, ';
     }
-    if (!empName) {
-      isProceed = false;
+    if (!formData.empId) {
+      isValid = false;
+      errorMessage += 'Employee ID, ';
+    }
+    if (!formData.empName) {
+      isValid = false;
       errorMessage += 'Employee Name, ';
     }
-    if (!empEmailId) {
-      isProceed = false;
+    if (!formData.empEmailId) {
+      isValid = false;
       errorMessage += 'Email, ';
-    } else if (!/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(empEmailId)) {
-      isProceed = false;
-      errorMessage += 'Valid Email, ';
     }
-    if (!empContactNo) {
-      isProceed = false;
+    if (!formData.empDesignationId) {
+      isValid = false;
+      errorMessage += 'Designation ID, ';
+    }
+    if (!formData.empContactNo) {
+      isValid = false;
       errorMessage += 'Contact No, ';
     }
-   
-
-    if (!isProceed) {
-      errorMessage = errorMessage.slice(0, -2); // Remove the last comma and space
-      alert(errorMessage);
+    if (!formData.empAltContactNo) {
+      isValid = false;
+      errorMessage += 'Alternate Contact No, ';
+    }
+    if (!formData.empPersonalEmailId) {
+      isValid = false;
+      errorMessage += 'Personal Email, ';
+    }
+    if (!formData.empExpTotalYear) {
+      isValid = false;
+      errorMessage += 'Total Years of Experience, ';
+    }
+    if (!formData.empExpTotalMonth) {
+      isValid = false;
+      errorMessage += 'Total Months of Experience, ';
+    }
+    if (!formData.empCity) {
+      isValid = false;
+      errorMessage += 'City, ';
+    }
+    if (!formData.empState) {
+      isValid = false;
+      errorMessage += 'State, ';
+    }
+    if (!formData.empPinCode) {
+      isValid = false;
+      errorMessage += 'Pin Code, ';
+    }
+    if (!formData.empAddress) {
+      isValid = false;
+      errorMessage += 'Address, ';
+    }
+    if (!formData.empPerCity) {
+      isValid = false;
+      errorMessage += 'Permanent City, ';
+    }
+    if (!formData.empPerState) {
+      isValid = false;
+      errorMessage += 'Permanent State, ';
+    }
+    if (!formData.empPerPinCode) {
+      isValid = false;
+      errorMessage += 'Permanent Pin Code, ';
+    }
+    if (!formData.empPerAddress) {
+      isValid = false;
+      errorMessage += 'Permanent Address, ';
+    }
+    if (!formData.password) {
+      isValid = false;
+      errorMessage += 'Password, ';
     }
 
-    return isProceed;
+    // Check if email is valid using regex
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.empEmailId)) {
+      isValid = false;
+      errorMessage += 'Valid Email, ';
+    }
+
+    // Check if phone number is valid
+    if (!formData.empContactNo.match(/^\d{10}$/)) {
+      isValid = false;
+      errorMessage += 'Valid Contact No';
+    }
+
+    // Display error message if validation fails
+    if (!isValid) {
+      toast.warning(errorMessage);
+    }
+
+    return isValid;
   };
 
   const handleSkillChange = (index, e) => {
@@ -113,12 +217,15 @@ const EmployeeForm = () => {
   };
 
   const SaveEmployee = async () => {
-    const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/CreateNewEmployee", formData);
-    if (result.data.data) {
-      alert("Data saved successfully");
-    } else {
-      alert(result.message);
+    if (validateForm()) {
+      const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/CreateNewEmployee", formData);
+      if (result.data.data) {
+        alert("Data saved successfully");
+      } else {
+        alert(result.message);
+      }
     }
+
   };
 
 
@@ -128,6 +235,42 @@ const EmployeeForm = () => {
         <Card.Header>Employee Form</Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
+            <Row>
+              <Col>
+                <Form.Group controlId="roleId">
+                  <Form.Label>Employee Role:</Form.Label>
+                  <select className='form-select'  name="roleId" value={formData.roleId} onChange={handleChange}>
+                    {
+                      rollName.map((rol)=>{
+                        return(
+                          <option key={rol.roleId} value={rol.roleId}>{rol.roll}</option>
+                        )
+                      })
+                    }
+                  </select>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group controlId="empDesignationId">
+                <Form.Label>Employee Designation:</Form.Label>
+                  {/* <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
+                    {
+                      designation.map((des)=>{
+                        return(
+                          <option key={des.empDesignationId} value={des.empDesignationId}>{des.empDesignation}</option>
+                        )
+                      })
+                    }
+                  </select> */}
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group controlId="empName">
+                  <Form.Label>Employee Name:</Form.Label>
+                  <Form.Control type="text" name="empName" value={formData.empName} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+            </Row>
             <Row>
               <Col>
                 <Form.Group controlId="userName">
@@ -301,19 +444,19 @@ const EmployeeForm = () => {
                 </Col>
               </Row>
             ))}
-               <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
-          <div className='row'>
-            <div className='col-3'>
-            <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
-            </div>
-            <div className='col-3'>
-            <Button variant="warning" type="submit">Update</Button>
-            </div>
-            <div className='col-3'>
-            <Button variant="danger" type="submit">Cancel</Button>
-            </div>
-          </div>
-        </card-footer>
+            <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
+              <div className='row'>
+                <div className='col-3'>
+                  <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
+                </div>
+                <div className='col-3'>
+                  <Button variant="warning" type="submit">Update</Button>
+                </div>
+                <div className='col-3'>
+                  <Button variant="danger" type="submit">Cancel</Button>
+                </div>
+              </div>
+            </card-footer>
           </Form>
         </Card.Body>
       </Card>
