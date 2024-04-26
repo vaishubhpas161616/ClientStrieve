@@ -29,14 +29,10 @@ const EmployeeForm = () => {
     ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
 
-<<<<<<< HEAD
   const [isEditing, setIsEditing] = useState(false);
-=======
-  const [rollName, setRollName]= useState('');
-  console.log(rollName);
-  const [designation, setDesignation]= useState('')
->>>>>>> 62425c862ea5c2a56a9f98e6f6288ad2691bcee1
-
+   const[rollName,setRollName]=useState([]);
+   const[designation,setDesignation]=useState([]);
+  //  console.log(response);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -51,14 +47,16 @@ const EmployeeForm = () => {
   },[]);
 
   const getAllRole = async () => {
+    
     try {
       const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
         headers: {
           Authorization: `Bearer ${localStorage.getItem('loginToken')}`
         }
       });
-      setRollName(response.data.data);
       
+      setRollName(response.data.data);
+      debugger;
     } catch (error) {
       console.error("Error fetching roles:", error);
       // Handle error
@@ -122,70 +120,6 @@ const EmployeeForm = () => {
       isValid = false;
       errorMessage += 'Email, ';
     }
-<<<<<<< HEAD
-    if (!empContactNo) {
-      isProceed = false;
-      errorMessage += 'empContactNo, ';
-    }
-    if (!empAltContactNo) {
-      isProceed = false;
-      errorMessage += 'empAltContactNo, ';
-    }
-    if (!empPersonalEmailId) {
-      isProceed = false;
-      errorMessage += 'empPersonalEmailId, ';
-    }
-    if (! empExpTotalYear) {
-      isProceed = false;
-      errorMessage += 'empExpTotalYear, ';
-    }
-    
-    if (! empExpTotalMonth) {
-      isProceed = false;
-      errorMessage += 'empExpTotalMonth, ';
-    }
-    if (! empCity) {
-      isProceed = false;
-      errorMessage += 'empCity, ';
-    }
-    if (! empState) {
-      isProceed = false;
-      errorMessage += 'empState, ';
-    }
-    if (! empPinCode) {
-      isProceed = false;
-      errorMessage += 'Contact No, ';
-    }
-    if (! empAddress) {
-      isProceed = false;
-      errorMessage += 'empAddress, ';
-    }
-    if (!empPerCity) {
-      isProceed = false;
-      errorMessage += 'empPerCity, ';
-    }
-   
-    if (! empPerState) {
-      isProceed = false;
-      errorMessage += 'empPerState, ';
-    }
-    if (! empPerPinCode) {
-      isProceed = false;
-      errorMessage += 'empPerPinCode, ';
-    }
-   
-    if (!  empPerAddress) {
-      isProceed = false;
-      errorMessage += 'empPerAddress, ';
-    }
-    if (!  password) {
-      isProceed = false;
-      errorMessage += 'password, ';
-    }
-    if (!isProceed) {
-      errorMessage = errorMessage.slice(0, -2); // Remove the last comma and space
-      alert(errorMessage);
-=======
     if (!formData.empDesignationId) {
       isValid = false;
       errorMessage += 'Designation ID, ';
@@ -245,7 +179,6 @@ const EmployeeForm = () => {
     if (!formData.password) {
       isValid = false;
       errorMessage += 'Password, ';
->>>>>>> 62425c862ea5c2a56a9f98e6f6288ad2691bcee1
     }
 
     // Check if email is valid using regex
@@ -315,7 +248,7 @@ const EmployeeForm = () => {
                     {
                       rollName.map((rol)=>{
                         return(
-                          <option key={rol.roleId} value={rol.roleId}>{rol.roll}</option>
+                          <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
                         )
                       })
                     }
@@ -325,15 +258,15 @@ const EmployeeForm = () => {
               <Col>
                 <Form.Group controlId="empDesignationId">
                 <Form.Label>Employee Designation:</Form.Label>
-                  {/* <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
+                  <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
                     {
                       designation.map((des)=>{
                         return(
-                          <option key={des.empDesignationId} value={des.empDesignationId}>{des.empDesignation}</option>
+                          <option key={des.empDesignationId} value={des.empDesignationId}>{des.empDesignationId}</option>
                         )
                       })
                     }
-                  </select> */}
+                  </select>
                 </Form.Group>
               </Col>
               <Col>
@@ -516,7 +449,6 @@ const EmployeeForm = () => {
                 </Col>
               </Row>
             ))}
-<<<<<<< HEAD
                <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
             <div className='row'>
               <div className='col-3'>
@@ -530,21 +462,6 @@ const EmployeeForm = () => {
 </div>
         </card-footer>
 
-=======
-            <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
-              <div className='row'>
-                <div className='col-3'>
-                  <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
-                </div>
-                <div className='col-3'>
-                  <Button variant="warning" type="submit">Update</Button>
-                </div>
-                <div className='col-3'>
-                  <Button variant="danger" type="submit">Cancel</Button>
-                </div>
-              </div>
-            </card-footer>
->>>>>>> 62425c862ea5c2a56a9f98e6f6288ad2691bcee1
           </Form>
         </Card.Body>
       </Card>
