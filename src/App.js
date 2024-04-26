@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 import Navbar from './Component/Navbar/Navbar';
@@ -7,10 +7,12 @@ import BreadCrumb from './utility/BreadCrumb';
 import Login from './Component/Auth/Login';
 import Change from './Component/ProjectChange/Change';
 import Client from './Component/Client/Client';
-import Employee from './Component/Employee/Employee';
+import Employee from './Component/Employee/Employee.js';
+import { Outlet } from 'react-router-dom';
 import Meeting from './Component/Meeting/Meeting';
 import Payment from './Component/Payment/Payment';
 import Project from './Component/Project/Project';
+import EmployeeForm from './Component/Employee/EmployeeForm.js';
 
 const App = () => {
   return (
@@ -19,13 +21,14 @@ const App = () => {
         <Navbar />
         <BreadCrumb />
         <Routes>
-          <Route path="/login" component={Login} />
-          <Route path="/change-project" component={Change} />
-          <Route path="/client" component={Client} />
-          <Route path="/employee" component={Employee} />
-          <Route path="/meeting" component={Meeting} />
-          <Route path="/payment" component={Payment} />
-          <Route path="/project" component={Project} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/change-project" element={<Change />} />
+          <Route path="/client" element={<Client />} />
+          <Route path="/employee" element={<Employee />} />
+          <Route path="/employee-form" element={<EmployeeForm />} /> {/* Updated route */}
+          <Route path="/meeting" element={<Meeting />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/project" element={<Project />} />
         </Routes>
       </div>
     </BrowserRouter>
