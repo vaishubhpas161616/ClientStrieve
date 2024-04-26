@@ -29,10 +29,9 @@ const EmployeeForm = () => {
     ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
 
-  const [rollName, setRollName]= useState('');
-  console.log(rollName);
-  const [designation, setDesignation]= useState('')
-
+  const [rollName, setRollName]= useState([]);
+  const [designation, setDesignation]= useState([])
+  console.log(designation)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -53,6 +52,7 @@ const EmployeeForm = () => {
           Authorization: `Bearer ${localStorage.getItem('loginToken')}`
         }
       });
+      // console.log(response)
       setRollName(response.data.data);
       
     } catch (error) {
@@ -243,7 +243,7 @@ const EmployeeForm = () => {
                     {
                       rollName.map((rol)=>{
                         return(
-                          <option key={rol.roleId} value={rol.roleId}>{rol.roll}</option>
+                          <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
                         )
                       })
                     }
@@ -253,15 +253,16 @@ const EmployeeForm = () => {
               <Col>
                 <Form.Group controlId="empDesignationId">
                 <Form.Label>Employee Designation:</Form.Label>
-                  {/* <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
+                  <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
                     {
                       designation.map((des)=>{
                         return(
-                          <option key={des.empDesignationId} value={des.empDesignationId}>{des.empDesignation}</option>
+                          <option key={des.designationId} value={des.designationId}>{des.designation}
+                          </option>
                         )
                       })
                     }
-                  </select> */}
+                  </select>
                 </Form.Group>
               </Col>
               <Col>
