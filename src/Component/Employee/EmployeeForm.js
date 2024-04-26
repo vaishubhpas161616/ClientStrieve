@@ -29,10 +29,9 @@ const EmployeeForm = () => {
     ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-   const[rollName,setRollName]=useState([]);
-   const[designation,setDesignation]=useState([]);
-  //  console.log(response);
+  const [rollName, setRollName]= useState([]);
+  const [designation, setDesignation]= useState([])
+  console.log(designation)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -54,6 +53,8 @@ const EmployeeForm = () => {
           Authorization: `Bearer ${localStorage.getItem('loginToken')}`
         }
       });
+      // console.log(response)
+      setRollName(response.data.data);
       
       setRollName(response.data.data);
       debugger;
@@ -262,7 +263,8 @@ const EmployeeForm = () => {
                     {
                       designation.map((des)=>{
                         return(
-                          <option key={des.empDesignationId} value={des.empDesignationId}>{des.empDesignationId}</option>
+                          <option key={des.designationId} value={des.designationId}>{des.designation}
+                          </option>
                         )
                       })
                     }
