@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-const Employee = () => {
+const Employee = (emp) => {
   const navigate = useNavigate();
   const [empList, setEmpList] = useState([]);
  
@@ -21,7 +21,14 @@ const Employee = () => {
     setEmpList(response.data.data);
   }
   
- 
+  const handleEditForm = (empId) => {
+    // Navigate to the EmployeeForm component with empId as URL parameter
+    navigate(`/employee-form/${empId}`);
+  };
+  // const handleDeleteForm = (empId) => {
+  //   // Call the onDeleteForm function with the empId
+  //   onDeleteForm(empId);
+  // };
   const handleAddEmployee = () => {
     navigate('/employee-form');
   };
@@ -68,7 +75,12 @@ const Employee = () => {
                           <td>{emp.empEmailId}</td>
                           <td>{emp.empDesignation}</td>
                           <td>{emp.role}</td>
-                          <td></td>
+                          <td>
+                         <button className='btn btn-col-2 btn-primary mx-1' onClick={() => handleEditForm(emp.empId)}>Edit</button>
+
+
+                          {/* <button className='btn btn-col-2 btn-primary' onClick={() => handleDeleteForm(emp.empId)}>Delete</button> */}
+                          </td>
                   </tr>)
               })
                }

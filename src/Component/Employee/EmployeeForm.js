@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+// import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const EmployeeForm = () => {
+  const { empId } = useParams();
+  console.log(empId);
+  
   const [formData, setFormData] = useState({
     roleId: 0,
     userName: '',
@@ -30,7 +35,8 @@ const EmployeeForm = () => {
   });
 
   const [rollName, setRollName]= useState([]);
-  const [designation, setDesignation]= useState([])
+  const [designation, setDesignation]= useState([]);
+  const[getemp,setgetemp]=useState([]);
   console.log(designation)
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +49,12 @@ const EmployeeForm = () => {
   useEffect(()=>{
     getAllRole();
     getAllDesignation();
-  },[]);
+    handleUpdate();
+    if (empId) {
+      // Fetch employee data based on empId
+      getAllEmpByEmpId(empId);
+    }
+  }, [empId]);
 
   const getAllRole = async () => {
     
@@ -272,39 +283,94 @@ const EmployeeForm = () => {
     }
   };
   
+  const getAllEmpByEmpId = async () => {
+    try {
+      const result = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetEmployeeByEmployeeId?id=${empId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+        }
+      });
+      const employeeData = result.data.data;
+      // Update the formData state with the fetched employee data
+      setFormData({
+        ...formData,
+        roleId: employeeData.roleId,
+        userName: employeeData.userName,
+        empCode: employeeData.empCode,
+        empName: employeeData.empName,
+        empEmailId: employeeData.empEmailId,
+        empDesignationId: employeeData.empDesignationId,
+        empContactNo: employeeData.empContactNo,
+        empAltContactNo: employeeData.empAltContactNo,
+        empPersonalEmailId: employeeData.empPersonalEmailId,
+        empExpTotalYear: employeeData.empExpTotalYear,
+        empExpTotalMonth: employeeData.empExpTotalMonth,
+        empCity: employeeData.empCity,
+        empState: employeeData.empState,
+        empPinCode: employeeData.empPinCode,
+        empAddress: employeeData.empAddress,
+        empPerCity: employeeData.empPerCity,
+        empPerState: employeeData.empPerState,
+        empPerPinCode: employeeData.empPerPinCode,
+        empPerAddress: employeeData.empPerAddress,
+        password: employeeData.password,
+        ErpEmployeeSkills: employeeData.ErpEmployeeSkills,
+        ErmEmpExperiences: employeeData.ErmEmpExperiences
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error
+    }
+  };
+  
+  const handleUpdate = async () => {
+    try {
+      const result = await axios.put(
+        `https://freeapi.gerasim.in/api/ClientStrive/UpdateEmployee/${empId}`, // Assuming your API endpoint for updating is something like this
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+          }
+        }
+      );
+      if (result.data.result) {
+        alert("Data updated successfully");
+        // Optionally, you can update the local state or perform any other action upon successful update
+      } else {
+        alert(result.data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while updating data");
+    }
+  };
+  
     return (
       <Container>
         <Card>
           <Card.Header>Employee Form</Card.Header>
           <Card.Body>
+            {/* {JSON.stringify(getemp)} */}
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col>
                   <Form.Group controlId="roleId">
                     <Form.Label>Employee Role:</Form.Label>
-                    <select className='form-select'  name="roleId" value={formData.roleId} onChange={handleChange}>
-                      {
-                        rollName.map((rol)=>{
-                          return(
-                            <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
-                          )
-                        })
-                      }
+                    <select className='form-select' name="roleId" value={formData.roleId} onChange={handleChange}>
+                      {rollName && rollName.map((rol) => (
+                        <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
+                      ))}
                     </select>
                   </Form.Group>
                 </Col>
                 <Col>
                   <Form.Group controlId="empDesignationId">
-                  <Form.Label>Employee Designation:</Form.Label>
-                    <select className='form-select'  name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
-                      {
-                        designation.map((des)=>{
-                          return(
-                            <option key={des.designationId} value={des.designationId}>{des.designation}
-                            </option>
-                          )
-                        })
-                      }
+                    <Form.Label>Employee Designation:</Form.Label>
+                    <select className='form-select' name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
+                      {designation && designation.map((des) => (
+                        <option key={des.designationId} value={des.designationId}>{des.designation}</option>
+                      ))}
                     </select>
                   </Form.Group>
                 </Col>
