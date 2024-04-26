@@ -1,13 +1,44 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const Employee = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    getAllEmp();
+    getAllRole();
+    getAllDesignation();
+  }, [])
+
+  const getAllEmp = async () => {
+    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllEmployee',{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
+      }
+    });
+  }
+
+  const getAllRole=async()=>{
+    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllPayments',{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
+      }
+    });
+  }
+
+  const getAllDesignation= async()=>{
+    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
+      }
+    });
+  }
   const handleAddEmployee = () => {
-    navigate('/employee-form'); 
+    navigate('/employee-form');
   };
+
 
   return (
     <div>
@@ -25,36 +56,36 @@ const Employee = () => {
                 </div>
               </div>
             </div>
-                            <div className='card-body'>
-                            <table className="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Designation</th>
-                                    <th>Contact No.</th>
-                                    <th>Total Experience</th>
-                                    <th>City</th>
-                                    <th>Personal Address</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* Render your employee list here */}
-                            </tbody>
-                        </table>
-                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                        
+            <div className='card-body'>
+              <table className="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Contact No.</th>
+                    <th>Total Experience</th>
+                    <th>City</th>
+                    <th>Personal Address</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Render your employee list here */}
+                </tbody>
+              </table>
 
-                <div className='col-4'>
-                    {/* Your content in col-4 */}
-                </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-    );
+
+      <div className='col-4'>
+        {/* Your content in col-4 */}
+      </div>
+    </div>
+
+  );
 };
 
 export default Employee;
