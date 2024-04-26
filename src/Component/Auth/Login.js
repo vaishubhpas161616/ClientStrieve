@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import sweetAlertService from "../../Service/sweetAlertServices";
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 
 const Login = () => {
@@ -17,21 +18,25 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  const validate = () => {
-    let isValid = true;
+ 
 
-    if (emailId === "" || password === "") {
-      isValid = false;
-      toast.warning("Please enter both username and password");
-    }
-    return isValid;
-  }
-
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    if (validate()) {
-
+    try {
+      const loginObj={
+        "password": password,
+        "username": emailId
+      }
+      const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/login", loginObj);
+      if (result.data.data.token) {
+        alert("Data saved successfully");
+        localStorage.setItem('loginToken',result.data.data.token)
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while saving data");
     }
 
 
@@ -47,7 +52,7 @@ const Login = () => {
                   <Form.Group >
                     <Form.Label className='font-lg'>Email address</Form.Label>
                     <Form.Control
-                      type="email"
+                      type="text"
                       placeholder="Enter email"
                       value={emailId}
                       onChange={handleEmailChange}
