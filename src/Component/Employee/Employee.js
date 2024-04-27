@@ -1,38 +1,37 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-const Employee = (emp) => {
+const Employee = () => {
   const navigate = useNavigate();
   const [empList, setEmpList] = useState([]);
- 
 
   useEffect(() => {
     getAllEmp();
   }, [])
 
   const getAllEmp = async () => {
-    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllEmployee',{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
-      }
-    });
-    setEmpList(response.data.data);
+    try {
+      const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllEmployee', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
+        }
+      });
+      setEmpList(response.data.data);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
   }
   
   const handleEditForm = (empId) => {
     // Navigate to the EmployeeForm component with empId as URL parameter
     navigate(`/employee-form/${empId}`);
   };
-  // const handleDeleteForm = (empId) => {
-  //   // Call the onDeleteForm function with the empId
-  //   onDeleteForm(empId);
-  // };
+
   const handleAddEmployee = () => {
     navigate('/employee-form');
   };
-
 
   return (
     <div>
@@ -60,44 +59,33 @@ const Employee = (emp) => {
                     <th>Emp-Email</th>
                     <th>Emp-Designation</th>
                     <th>Emp-Role</th>
-                 
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-               {
-                empList.map((emp,index)=>
-              {
-                  return(<tr key={emp.empId}>
-                         <td>{index+1}</td>
-                          <td>{emp.empName}</td>
-                          <td>{emp.empCode}</td>
-                          <td>{emp.empEmailId}</td>
-                          <td>{emp.empDesignation}</td>
-                          <td>{emp.role}</td>
-                          <td>
-                         <button className='btn btn-col-2 btn-primary mx-1' onClick={() => handleEditForm(emp.empId)}>Edit</button>
-
-
-                          {/* <button className='btn btn-col-2 btn-primary' onClick={() => handleDeleteForm(emp.empId)}>Delete</button> */}
-                          </td>
-                  </tr>)
-              })
-               }
+                  {empList.map((emp, index) => (
+                    <tr key={emp.empId}>
+                      <td>{index + 1}</td>
+                      <td>{emp.empName}</td>
+                      <td>{emp.empCode}</td>
+                      <td>{emp.empEmailId}</td>
+                      <td>{emp.empDesignation}</td>
+                      <td>{emp.role}</td>
+                      <td>
+                        <button className='btn btn-col-2 btn-primary mx-1' onClick={() => handleEditForm(emp.empId)}>Edit</button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
-
             </div>
           </div>
         </div>
       </div>
-
-
       <div className='col-4'>
         {/* Your content in col-4 */}
       </div>
     </div>
-
   );
 };
 
