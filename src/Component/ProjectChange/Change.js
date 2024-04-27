@@ -79,7 +79,7 @@ const Change = () => {
         Open Form Modal
       </Button>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Project Change</Modal.Title>
         </Modal.Header>
