@@ -20,7 +20,7 @@ const App = () => {
         <Navbar />
         <BreadCrumb />
         <Routes>
-          <Route path="/login" element={Login} />
+          <Route path="/login" element={<Login/>} />
           <Route path="/change-project" element={<Change/>} />
           <Route path="/client" element={<Client/>} />
           <Route path="/employee" element={<Employee/>} />
