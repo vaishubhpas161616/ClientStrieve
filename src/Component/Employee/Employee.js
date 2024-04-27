@@ -1,15 +1,15 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const Employee = () => {
   const navigate = useNavigate();
+  const [empList, setEmpList] = useState([]);
+ 
 
   useEffect(() => {
     getAllEmp();
-    getAllRole();
-    getAllDesignation();
   }, [])
 
   const getAllEmp = async () => {
@@ -18,23 +18,10 @@ const Employee = () => {
         Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
       }
     });
+    setEmpList(response.data.data);
   }
-
-  const getAllRole=async()=>{
-    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllPayments',{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
-      }
-    });
-  }
-
-  const getAllDesignation= async()=>{
-    const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('loginToken')}` 
-      }
-    });
-  }
+  
+ 
   const handleAddEmployee = () => {
     navigate('/employee-form');
   };
@@ -60,17 +47,31 @@ const Employee = () => {
               <table className="table table-striped table-bordered">
                 <thead>
                   <tr>
+                    <th>SrNo</th>
                     <th>Name</th>
-                    <th>Designation</th>
-                    <th>Contact No.</th>
-                    <th>Total Experience</th>
-                    <th>City</th>
-                    <th>Personal Address</th>
+                    <th>Emp-Code</th>
+                    <th>Emp-Email</th>
+                    <th>Emp-Designation</th>
+                    <th>Emp-Role</th>
+                 
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Render your employee list here */}
+               {
+                empList.map((emp,index)=>
+              {
+                  return(<tr key={emp.empId}>
+                         <td>{index+1}</td>
+                          <td>{emp.empName}</td>
+                          <td>{emp.empCode}</td>
+                          <td>{emp.empEmailId}</td>
+                          <td>{emp.empDesignation}</td>
+                          <td>{emp.role}</td>
+                          <td></td>
+                  </tr>)
+              })
+               }
                 </tbody>
               </table>
 
