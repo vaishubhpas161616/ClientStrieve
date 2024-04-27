@@ -1,50 +1,80 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import sweetAlertService from "../../Service/sweetAlertServices";
-import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { Modal, Button, Form } from "react-bootstrap";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 const Change = () => {
+  const [empList, setEmpList] = useState([]);
+  const [formData, setFormData] = useState({
+    projectChangeId: 0,
+    projectId: 0,
+    changeDetails: "string",
+    changeDate: "",
+    approvedByEmpId: 0,
+  });
+  const [show, setShow] = useState(false);
 
-    const [formData, setFormData] = useState({
-        projectChangeId: 0,
-        projectId: 0,
-        changeDetails: "string",
-        changeDate: "2024-04-26T06:54:33",
-        approvedByEmpId: 0
-      });
-      const [show, setShow] = useState(false);
-    
-      const handleClose = () => setShow(false);
-      const handleShow = () => setShow(true);
-    
-      const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData({ ...formData, [name]: value });
-      };
-    
-      const handleSubmit = async (event) => {
-        event.preventDefault();
-    
-        // Validation
-        const { projectChangeId, projectId, changeDetails, changeDate, approvedByEmpId } = formData;
-        if (!projectChangeId || !projectId || !changeDetails || !changeDate || !approvedByEmpId) {
-          alert("Please fill in all fields.");
-          return;
-        }
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-        try {
-          const response = await axios.post('https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange',formData);
-            if(response.data.result){
-                toast.success("Data inserted Successfully");
-                handleClose(); 
-            }
-          
-        } catch (error) {
-          toast.error('Error:', error);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleReset = () => {
+    setFormData({
+      projectChangeId: 0,
+      projectId: 0,
+      changeDetails: "string",
+      changeDate: "",
+      approvedByEmpId: 0,
+    })
+  }
+
+  useEffect(() => {
+    getAllEmployee();
+  }, []);
+
+  const getAllEmployee = async () => {
+    debugger;
+    const response = await axios.get(
+      "https://freeapi.gerasim.in/api/ClientStrive/GetAllEmployee",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+        },
+      }
+    );
+    console.log(response);
+    setEmpList(response.data.data);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+          },
         }
-      };
-    return (
-        <>
+      );
+      if (response.data.result) {
+        toast.success("Data inserted Successfully");
+        handleClose();
+      }
+    } catch (error) {
+      toast.error("Error:", error);
+    }
+  };
+
+  return (
+    <>
       <Button variant="primary" onClick={handleShow}>
         Open Form Modal
       </Button>
@@ -55,22 +85,51 @@ const Change = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-
             <Form.Group controlId="changeDetails">
-              <Form.Label>Change Details</Form.Label>
-              <Form.Control as="textarea" rows={3} name="changeDetails" value={formData.changeDetails} onChange={handleChange} />
+              <Form.Label>Change Details:</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="changeDetails"
+                value={formData.changeDetails}
+                onChange={handleChange}
+              />
             </Form.Group>
-
             <Form.Group controlId="changeDate">
-              <Form.Label>Change Date</Form.Label>
-              <Form.Control type="datetime-local" name="changeDate" value={formData.changeDate} onChange={handleChange} />
+              <Form.Label>Change Date:</Form.Label>
+              <Form.Control
+                type="datetime-local"
+                name="changeDate"
+                value={formData.changeDate.split("T")[0]}
+                onChange={handleChange}
+              />
             </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-            <Button variant="warning" type="submit">
-              Update
-            </Button>
+            <Form.Group controlId="roleId">
+              <Form.Label>Employee:</Form.Label>
+              <select
+                className="form-select"
+                name="roleId"
+                value={formData.approvedByEmpId}
+                onChange={handleChange}
+              >
+                {empList.map((emp) => {
+                  return (
+                    <option key={emp.empId} value={emp.empId}>
+                      {emp.empName}
+                    </option>
+                  );
+                })}
+              </select>
+            </Form.Group>
+            {formData.projectChangeId === 0 ? (
+              <Button variant="primary" type="submit" className="mt-2">
+                Submit
+              </Button>
+            ) : (
+              <Button variant="warning" type="submit" className="mt-2">
+                Update
+              </Button>
+            )}
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -80,7 +139,7 @@ const Change = () => {
         </Modal.Footer>
       </Modal>
     </>
-    );
+  );
 };
 
 export default Change;
