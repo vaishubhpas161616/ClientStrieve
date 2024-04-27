@@ -12,7 +12,7 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/login">Login</Link>
+              <Link className="nav-link" to="/">Login</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/change-project">Change Project</Link>
@@ -22,6 +22,9 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/employee">Employee</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/employee-form">EmployeeForm</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/meeting">Meeting</Link>

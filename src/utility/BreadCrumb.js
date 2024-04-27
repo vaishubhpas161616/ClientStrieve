@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 const BreadCrumb = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
+  pathnames.unshift(<strong key="ClientStrive">ClientStrive</strong>);
 
   return (
     <nav aria-label="breadcrumb">
