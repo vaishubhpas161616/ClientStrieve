@@ -3,17 +3,19 @@ import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { FaEdit } from 'react-icons/fa';
+
 
 const Meeting = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const [getmeetings, setGetMeetings] = useState([]);
-    const [AddUpdateMeeting, setAddUpdateMeeting] = useState(
+    const [getMeetingsList, setGetMeetingsList] = useState([]);
+    const [addUpdateProjectMeeting, setaddUpdateProjectMeeting] = useState(
         {
-            projectMeetingId: '',
-            projectId: '',
-            meetingLeadByEmpId: '',
+            projectMeetingId: 0,
+            projectId: 0,
+            meetingLeadByEmpId: 0,
             meetingDate: '',
             startTime: '',
             endTime: '',
@@ -24,82 +26,87 @@ const Meeting = () => {
             clientPersonNames: '',
             meetingTitle: '',
             meetingStatus: ''
-        }
+          }
     );
 
     // State variables for holding error messages
     const [errors, setErrors] = useState({
-        meetingDate: '',
-        startTime: '',
-        endTime: '',
-        meetingMedium: '',
-        recordingUrl: '',
-        meetingNotes: '',
-        clientPersonNames: '',
-        meetingTitle: '',
-        meetingStatus: ''
-    }
-    );
+        projectMeetingId: 0,
+            projectId: 0,
+            meetingLeadByEmpId: 0,
+            meetingDate: '',
+            startTime: '',
+            endTime: '',
+            meetingMedium: '',
+            isRecordingAvailable: true,
+            recordingUrl: '',
+            meetingNotes: '',
+            clientPersonNames: '',
+            meetingTitle: '',
+            meetingStatus: ''
+    });
+
     useEffect(() => {
         getAllMeetings();
     }, []);
 
-    const changeAddUpdateMeeting = (event, key) => {
-        AddUpdateMeeting(prevObj => ({ ...prevObj, [key]: event.target.value }));
-        setAddUpdateMeeting(prevErrors => ({ ...prevErrors, [key]: '' }));
+    const onChangeAddUpdateMeeting = (event, key) => {
+        setaddUpdateProjectMeeting(prevObj => ({ ...prevObj, [key]: event.target.value }));
+        // Clear error message when user starts typing again
+        setErrors(prevErrors => ({ ...prevErrors, [key]: '' }));
     }
 
     const getAllMeetings = async () => {
         try {
-            const response = await axios.get("https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetings", {
+            const result = await axios.get("https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetings", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('loginToken')}`
                 }
             });
-            setGetMeetings(response.data.data);
+            setGetMeetingsList(result.data.data);
         } catch (error) {
-            console.error("Error fetching :", error);
+            console.error("Error fetching meetings:", error);
         }
     };
 
-    const Formvalidation = () => {
+    const validateForm = () => {
         let isValid = true;
         const newErrors = { ...errors };
 
         // Validation for each field
-        if (!AddUpdateMeeting.meetingDate.trim()) {
+        if (!addUpdateProjectMeeting.meetingDate.trim()) {
             newErrors.meetingDate = 'Meeting Date is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.startTime.trim()) {
+        if (!addUpdateProjectMeeting.startTime.trim()) {
             newErrors.startTime = 'Start Time is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.endTime.trim()) {
+        if (!addUpdateProjectMeeting.endTime.trim()) {
             newErrors.endTime = 'End Time is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.meetingMedium.trim()) {
-            newErrors.meetingMedium = 'Meeting Medium is required';
+        if (!addUpdateProjectMeeting.meetingMedium.trim()) {
+            newErrors.meetingMedium = 'Meeting medium is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.recordingUrl.trim()) {
-            newErrors.recordingUrl = 'Recording URL is required';
+        if (!addUpdateProjectMeeting.recordingUrl.trim()) {
+            newErrors.recordingUrl = 'RecordingUrl is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.meetingNotes.trim()) {
+        if (!addUpdateProjectMeeting.meetingNotes.trim()) {
             newErrors.meetingNotes = 'Meeting Notes is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.clientName.trim()) {
-            newErrors.clientName = 'Client Person Name is required';
+        if (!addUpdateProjectMeeting.clientPersonNames.trim()) {
+            newErrors.clientPersonNames = 'Client Person Names is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.meetingTitle.trim()) {
-            newErrors.meetingTitle = 'Meeting Title is required';
+        if (!addUpdateProjectMeeting.meetingTitle.trim()) {
+            newErrors.meetingTitle = ' Meeting Title is required';
             isValid = false;
         }
-        if (!AddUpdateMeeting.meetingStatus.trim()) {
+        if (!addUpdateProjectMeeting.meetingStatus.trim()) {
             newErrors.meetingStatus = 'Meeting Status is required';
             isValid = false;
         }
@@ -108,34 +115,65 @@ const Meeting = () => {
         return isValid;
     }
 
-
-    const SaveMeeting = async() => {
+    const SaveMeeting = async () => {
         debugger
-        if (Formvalidation()) {
-            try {
-                const result = await axios.post(
-                    "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
-                    AddUpdateMeeting,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-                        }
-                    }
-                );
-                if (result.data.data) {
-                    alert(result.data.data);
-                } else {
-                    alert(result.data.message);
-                }
-            } catch (error) {
-                console.error("Error saving meetings:", error);
-            }
-            return;
-        }
+         if (validateForm()) {
+             try {
+                 const result = await axios.post(
+                     "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
+                     addUpdateProjectMeeting,
+                     {
+                         headers: {
+                             Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                         }
+                     }
+                 );
+                 if (result.data.data) {
+                     Swal.fire(
+                         ' Meeting add Success!',
+                          result.data.data,
+                         'success'
+                     );
+                     getAllMeetings();
+                     handleClose()
+                     
+                 } else {
+                     alert(result.data.message);
+                     getAllMeetings();
+                 }
+             } catch (error) {
+                 console.error("Error saving Meeting:", error);
+             }
+             return;
+         }
+     };
+
+    
+     const editMeeting = (meeting) => {
+        setaddUpdateProjectMeeting(meeting);
+        handleShow();
     };
 
-
-
+    const onReset = () => {
+        debugger
+        setaddUpdateProjectMeeting(
+            {
+            projectMeetingId: 0,
+            projectId: 0,
+            meetingLeadByEmpId: 0,
+            meetingDate: '',
+            startTime: '',
+            endTime: '',
+            meetingMedium: '',
+            isRecordingAvailable: true,
+            recordingUrl: '',
+            meetingNotes: '',
+            clientPersonNames: '',
+            meetingTitle: '',
+            meetingStatus: ''
+            }
+        )
+    }
     return (
         <div>
             <div className="container-fluid">
@@ -156,43 +194,42 @@ const Meeting = () => {
                                 </div>
                             </div>
                             <div className='card-body'>
-                                <table className='table table-bordered text-center'>
+                            <table className='table table-bordered text-center'>
                                     <thead>
                                         <tr>
-                                        <th>Sr No</th>
-                                        <th>Person Name</th>
-                                        <th>Meeting Title</th>
-                                        <th>Meeting Date</th>
-                                        <th>Start Time</th>
-                                        <th>End Time</th>
-                                        <th>Meeting Medium</th>
-                                        <th>Recording Url</th>
-                                        <th>Meeting Status</th>
-                                        <th>Action</th>
+                                            <th>Sr.No</th>
+                                            <th>Meeting Date</th>
+                                            <th>Start Time</th>
+                                            <th>End Time</th>
+                                            <th>Meeting Medium</th>
+                                            <th>RecordingUrl</th>
+                                            <th>Meeting Notes</th>
+                                            <th>Client Person Names</th>
+                                            <th>Meeting Title</th>
+                                            <th>Meeting Status</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {
-                                            getmeetings.map((index, meeting) => {
-                                                return (<tr key={index + 1}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{meeting.clientPersonNames}</td>
-                                                    <td>{meeting.meetingTitle}</td>
-                                                    <td>{meeting.meetingDate}</td>
-                                                    <td>{meeting.startTime}</td>
-                                                    <td>{meeting.meetingMedium}</td>
-                                                    <td>{meeting.recordingUrl}</td>
-                                                    <td>{meeting.meetingNotes}</td>
-                                                    <td>{meeting.meetingStatus}</td>
-                                                    <td>
-                                                        <button className='btn btn-success'>Edit</button>
-                                                    </td>
-                                                </tr>)
-                                            })
-                                        }
+                                        {getMeetingsList.map((meeting, index) => (
+                                            <tr key={index + 1}>
+                                                <td>{index + 1}</td>
+                                                <td>{meeting.meetingDate}</td>
+                                                <td>{meeting.startTime}</td>
+                                                <td>{meeting.endTime}</td>
+                                                <td>{meeting.meetingMedium}</td>
+                                                <td>{meeting.recordingUrl}</td>
+                                                <td>{meeting.meetingNotes}</td>
+                                                <td>{meeting.clientPersonNames}</td>
+                                                <td>{meeting.meetingTitle}</td>
+                                                <td>{meeting.meetingStatus}</td>
+                                                <td>
+                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editMeeting(meeting)}><FaEdit/> Edit</button>
+                                                </td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>
@@ -212,23 +249,23 @@ const Meeting = () => {
                                                     <div className='row'>
                                                         <div className="col-md-6">
                                                             <label>Project Id</label>
-                                                            <select name="projecId" id="" onChange={(event) => changeAddUpdateMeeting(event, 'projectId')} className='form-control'></select>
+                                                            <select name="projecId" id=""  className='form-control'></select>
 
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label>Meeting Lead By EmpId</label>
-                                                            <select name="" id="" onChange={(event) => changeAddUpdateMeeting(event, 'meetingLeadByEmpId')} className='form-control'></select>
+                                                            <select name="" id=""  className='form-control'></select>
                                                         </div>
                                                     </div>
                                                     <div className="row">
                                                         <div className='col-md-6'>
                                                             <label>Meeting Date </label>
-                                                            <input type="date" onChange={(event) => changeAddUpdateMeeting(event, 'meetingDate')} className='form-control' />
+                                                            <input type="date" value={addUpdateProjectMeeting.meetingDate}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingDate')} name='meetingDate' placeholder='Meeting Date' />
                                                             <small className="text-danger">{errors.meetingDate}</small>
                                                         </div>
                                                         <div className='col-md-6'>
                                                             <label>Satrt Time</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'startTime')} className='form-control' />
+                                                            <input type="text" value={addUpdateProjectMeeting.startTime}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'startTime')} name='startTime' placeholder='StarTime' />
                                                             <small className="text-danger">{errors.startTime}</small>
                                                         </div>
 
@@ -237,12 +274,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className='col-md-6'>
                                                             <label>End Time</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'endTime')} className='form-control' />
+                                                            <input type="text" value={addUpdateProjectMeeting.endTime}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'endTime')} name='endTime' placeholder='End Time' />
                                                             <small className="text-danger">{errors.endTime}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Medium</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'meetingMedium')} className='form-control' placeholder='Meeting Medium' />
+                                                            <input type="text"  value={addUpdateProjectMeeting.meetingMedium}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingMedium')} name='meetingMedium' placeholder='Meeting Medium' />
                                                             <small className="text-danger">{errors.meetingMedium}</small>
                                                         </div>
 
@@ -251,12 +288,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Recording Url</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'recordingUrl')} className='form-control' placeholder='Recording Url' />
+                                                            <input type="text"  value={addUpdateProjectMeeting.recordingUrl}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'recordingUrl')} name='recordingUrl' placeholder='Recording Url' />
                                                             <small className="text-danger">{errors.recordingUrl}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Notes</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'meetingNotes')} className='form-control' placeholder='Enter Notes' />
+                                                            <input type="text"  value={addUpdateProjectMeeting.meetingNotes}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingNotes')} name='meetingDate' placeholder='Meeting Notes' />
                                                             <small className="text-danger">{errors.meetingNotes}</small>
                                                         </div>
 
@@ -264,12 +301,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Client Person Name</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'clientPersonNames')} className='form-control' placeholder='Client Person Name' />
-                                                            <small className="text-danger">{errors.clientName}</small>
+                                                            <input type="text"  value={addUpdateProjectMeeting.clientPersonNames}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'clientPersonNames')} name='clientPersonNames' placeholder='Client Person Names' />
+                                                            <small className="text-danger">{errors.clientPersonNames}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Title</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'meetingTitle')} className='form-control' placeholder='Meeting Title' />
+                                                            <input type="text"  value={addUpdateProjectMeeting.meetingTitle}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingTitle')} name='meetingTitle' placeholder='Meeting Title' />
                                                             <small className="text-danger">{errors.meetingTitle}</small>
                                                         </div>
 
@@ -277,12 +314,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting status</label>
-                                                            <input type="text" onChange={(event) => changeAddUpdateMeeting(event, 'meetingStatus')} className='form-control' placeholder='Meeting Status' />
+                                                            <input type="text"  value={addUpdateProjectMeeting.meetingStatus}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingStatus')} name='meetingStatus' placeholder='Meeting Status' />
                                                             <small className="text-danger">{errors.meetingStatus}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">IsRecording Available</label>
-                                                            <input type="checkbox" onChange={(event) => changeAddUpdateMeeting(event, 'isRecordingAvailable')} name="" id="" className='form-check' />
+                                                            <input type="checkbox"  name="" id="" className='form-check' />
                                                         </div>
                                                     </div>
 
@@ -296,10 +333,10 @@ const Meeting = () => {
                             <Modal.Footer>
                                 <form action=""  >
                                     {
-                                        <button type='submit' className='btn btn-sm btn-primary' onClick={SaveMeeting}>Add</button>
+                                        <button type='submit' className='btn btn-sm btn-primary' onClick={SaveMeeting} >Add</button>
                                     }
                                 </form>
-                                <button className='btn btn-sm btn-secondary'  >Reset</button>
+                                <button className='btn btn-sm btn-secondary' onClick={onReset}  >Reset</button>
                             </Modal.Footer>
                         </Modal>
                     </form>
