@@ -15,25 +15,25 @@ const Navbar = () => {
               <Link className="nav-link" to="/">Login</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/change-project">Change Project</Link>
+              <Link className="nav-link" to="/Change-project">Change Project</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/client">Client</Link>
+              <Link className="nav-link" to="/Client">Client</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/employee">Employee</Link>
+              <Link className="nav-link" to="/Employee">Employee</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/employee-form">EmployeeForm</Link>
+              <Link className="nav-link" to="/Employee-form">EmployeeForm</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/meeting">Meeting</Link>
+              <Link className="nav-link" to="/Meeting">Meeting</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/payment">Payment</Link>
+              <Link className="nav-link" to="/Payment">Payment</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/project">Project</Link>
+              <Link className="nav-link" to="/Project">Project</Link>
             </li>
           </ul>
           <div className="d-flex ">

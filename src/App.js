@@ -20,15 +20,15 @@ const App = () => {
         <Navbar />
         <BreadCrumb />
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/change-project" element={<Change />} />
-          <Route path="/client" element={<Client />} />
-          <Route path="/employee" element={<Employee />} />
-          <Route path="/employee-form" element={<EmployeeForm />} /> 
-          <Route path="/employee-form/:empId" element={<EmployeeForm />} /> 
-          <Route path="/meeting" element={<Meeting />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/project" element={<Project />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Change-project" element={<Change />} />
+          <Route path="/Client" element={<Client />} />
+          <Route path="/Employee" element={<Employee />} />
+          <Route path="/Employee-form" element={<EmployeeForm />} /> 
+          <Route path="/Employee-form/:empId" element={<EmployeeForm />} /> 
+          <Route path="/Meeting" element={<Meeting />} />
+          <Route path="/Payment" element={<Payment />} />
+          <Route path="/Project" element={<Project />} />
         </Routes>
       </div>
     </BrowserRouter>

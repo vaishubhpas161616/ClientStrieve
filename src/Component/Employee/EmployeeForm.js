@@ -3,10 +3,11 @@ import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
+import { CardFooter } from 'react-bootstrap';
 
 const EmployeeForm = () => {
   const { empId } = useParams();
-
+  const [employeeId, setEmployeeId] = useState(empId);
   const [formData, setFormData] = useState({
     roleId: 0,
     userName: '',
@@ -28,15 +29,16 @@ const EmployeeForm = () => {
     empPerPinCode: '',
     empPerAddress: '',
     password: '',
-    ErpEmployeeSkills: [{ empSkillId: 0, skill: '', totalYearExp: 0, lastVersionUsed: '' }],
-    ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
+    // ErpEmployeeSkills: [{ empSkillId: 0, skill: '', totalYearExp: 0, lastVersionUsed: '' }],
+    // ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
   });
   
 
   const [rollName, setRollName] = useState([]);
   const [designation, setDesignation] = useState([]);
+ 
+
   
-  // const[employeeData, setemployeeData]=useState([]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -44,10 +46,12 @@ const EmployeeForm = () => {
       [name]: value
     });
   };
-
-  useEffect(() => {
+ 
+  
+ useEffect(() => {
     getAllRole();
     getAllDesignation();
+    // handleUpdate();
     debugger;
     if(empId !==undefined){
       fetchEmployeeData(empId);
@@ -55,41 +59,40 @@ const EmployeeForm = () => {
    
   }, []);
 
-  // const fetchEmployeeData = async (empId) => {
-  //   debugger;
-  //   try {
-  //     const response = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetEmployeeByEmployeeId?id=${empId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-  //       }
-  //     });
-  //     console.log(employeeData);
-  //     debugger;
-  //     // Assuming the response contains the employee data
-  //     const employeeData = response.data.data; 
+  const fetchEmployeeData = async (empId) => {
+    debugger;
+    try {
+      const response = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetEmployeeByEmployeeId?id=${empId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+        }
+      });
+      
+      debugger;
     
-  //     // or response.data.data, based on the structure
-  //     debugger;
-  //     setFormData(employeeData); // Update the formData state with fetched employee data
-  //   } catch (error) {
-  //     console.error('Error fetching employee data:', error);
-  //   }
-  // };
+      const employeeData = response.data.data; 
+    
+      //     debugger;
+      setFormData(employeeData); 
+    } catch (error) {
+      console.error('Error fetching employee data:', error);
+    }
+  };
   
    
   
   const getAllRole = async () => {
-    
+    debugger;
     try {
       const response = await axios.get('https://freeapi.gerasim.in/api/ClientStrive/GetAllRoles',{
         headers: {
           Authorization: `Bearer ${localStorage.getItem('loginToken')}`
         }
       });
-      // console.log(response)
-      setRollName(response.data.data);
+      console.log(response)
+      setRollName(response.data.data); 
       
-      setRollName(response.data.data);
+
       debugger;
     } catch (error) {
       console.error("Error fetching roles:", error);
@@ -106,51 +109,6 @@ const EmployeeForm = () => {
     console.log(response)
     setDesignation(response.data.data);
   }
-
-  const fetchEmployeeData = async (empId) => {
-    try {
-      debugger;
-      const response = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetEmployeeByEmployeeId?id=${empId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-        }
-      });
-      debugger;
-      const employeeData = response.data.data;
-      // Assuming employeeData contains roleId and empDesignationId
-      const { roleId, empDesignationId } = employeeData;
-      debugger;
-      // Fetch role and designation based on roleId and empDesignationId
-      const roleResponse = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetRoleById?id=${roleId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-        }
-      });
-      const designationResponse = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetDesignationById?id=${empDesignationId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-        }
-      });
-  debugger;
-      const roleData = roleResponse.data.data;
-      const designationData = designationResponse.data.data;
-  
-      // Merge the employeeData object with roleData and designationData
-      const updatedEmployeeData = {
-        ...employeeData,
-        role: roleData,
-        designation: designationData
-      };
-  
-      // Update the formData state with the merged object
-      setFormData(updatedEmployeeData);
-    } catch (error) {
-      console.error('Error fetching employee data:', error);
-    }
-  };
-  
-  
-      // Update the formData state with the merged object
     
   const isEditing=()=>
   {
@@ -284,25 +242,25 @@ const EmployeeForm = () => {
     return isValid;
   };
 
-  const handleSkillChange = (index, e) => {
-    const { name, value } = e.target;
-    const skills = [...formData.ErpEmployeeSkills];
-    skills[index][name] = value;
-    setFormData({
-      ...formData,
-      ErpEmployeeSkills: skills
-    });
-  };
+  // const handleSkillChange = (index, e) => {
+  //   const { name, value } = e.target;
+  //   const skills = [...formData.ErpEmployeeSkills];
+  //   skills[index][name] = value;
+  //   setFormData({
+  //     ...formData,
+  //     ErpEmployeeSkills: skills
+  //   });
+  // };
 
-  const handleExperienceChange = (index, e) => {
-    const { name, value } = e.target;
-    const experiences = [...formData.ErmEmpExperiences];
-    experiences[index][name] = value;
-    setFormData({
-      ...formData,
-      ErmEmpExperiences: experiences
-    });
-  };
+  // const handleExperienceChange = (index, e) => {
+  //   const { name, value } = e.target;
+  //   const experiences = [...formData.ErmEmpExperiences];
+  //   experiences[index][name] = value;
+  //   setFormData({
+  //     ...formData,
+  //     ErmEmpExperiences: experiences
+  //   });
+  // };
 
   const SaveEmployee = async () => {
     if (true) {
@@ -337,8 +295,8 @@ const EmployeeForm = () => {
             empPerPinCode: '',
             empPerAddress: '',
             password: '',
-            ErpEmployeeSkills: [{ empSkillId: 0, skill: '', totalYearExp: 0, lastVersionUsed: '' }],
-            ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
+            // ErpEmployeeSkills: [{ empSkillId: 0, skill: '', totalYearExp: 0, lastVersionUsed: '' }],
+            // ErmEmpExperiences: [{ empExpId: 0, companyName: '', startDate: '', endDate: '', designation: '', projectsWorkedOn: '' }]
           });
         } else {
           alert(result.data.message);
@@ -350,79 +308,77 @@ const EmployeeForm = () => {
     }
   };
   
-  // const getAllEmpByEmpId = async (empId) => {
-  //   try {
-  //     const response = await axios.get(`https://freeapi.gerasim.in/api/ClientStrive/GetEmployeeByEmployeeId?id=${empId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-  //       }
-  //     });
-  //     const employeeData = response.data.data;
-  //     // Update the formData state with fetched employee data
-  //     setFormData(employeeData);
-  //   } catch (error) {
-  //     console.error("Error fetching employee data:", error);
-  //   }
-  // };
+ 
 
-
-  // const handleUpdate = async () => {
-  //   try {
-  //     const result = await axios.put(
-  //       `https://freeapi.gerasim.in/api/ClientStrive/UpdateEmployee/${empId}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-  //         }
-  //       }
-  //     );
-  //     if (result.data.result) {
-  //       alert("Data updated successfully");
-  //       // Optionally, you can update the local state or perform any other action upon successful update
-  //     } else {
-  //       alert("Failed to update data: " + result.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating data:", error);
-  //     alert("An error occurred while updating data");
-  //   }
-  // };
+  const handleUpdate = async () => {
+    try {
+      debugger;
+    
+      const result = await axios.put(
+        "https://freeapi.gerasim.in/api/ClientStrive/UpdateEmployee", formData, 
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+          }
+        }
+      );
+      debugger;
+      if (result.data.result) {
+        alert("Data updated successfully");
+        // Optionally, you can update the local state or perform any other action upon successful update
+      } else {
+        alert(result.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+      alert("An error occurred while updating data");
+    }
+  };
+  
+  
   
     return (
       <Container>
         <Card>
-          <Card.Header>Employee Form</Card.Header>
+          <Card.Header className="bg-info">Employee Form</Card.Header>
           <Card.Body>
             {/* {JSON.stringify(getemp)} */}
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col>
+               
                 <Form.Group controlId="roleId">
-                  <Form.Label>Employee Role:</Form.Label>
-                  <select className='form-select' name="roleId" value={formData.roleId} onChange={handleChange}>
-                      {rollName.length > 0 && rollName.map((rol) => (
-                        <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
-                      ))}
+                    <Form.Label>Employee Role:</Form.Label>
+                    <select className='form-select'  name="roleId" value={formData.roleId} onChange={handleChange}>
+                    <option>Seletct role</option>
+                      {
+                        rollName.map((rol)=>{
+                          return(
+                            <option key={rol.roleId} value={rol.roleId}>{rol.role}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </Form.Group>
 
-                  </select>
-                </Form.Group>
                 </Col>
                 <Col>
                 <Form.Group controlId="empDesignationId">
                   <Form.Label>Employee Designation:</Form.Label>
-                  <select className='form-select' name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
-                      {designation.length > 0 && designation.map((des) => (
+                  
+                    <select className='form-select' name="empDesignationId" value={formData.empDesignationId} onChange={handleChange}>
+                    <option>Seletct Designation</option>
+                      {designation && designation.length > 0 && designation.map((des) => (
                         <option key={des.designationId} value={des.designationId}>{des.designation}</option>
                       ))}
-
-                  </select>
+                    </select>
                 </Form.Group>
                 </Col>
                 <Col>
                   <Form.Group controlId="empName">
                     <Form.Label>Employee Name:</Form.Label>
                     <Form.Control type="text" name="empName" value={formData.empName} onChange={handleChange} />
+
                   </Form.Group>
                 </Col>
               </Row>
@@ -554,7 +510,7 @@ const EmployeeForm = () => {
               </Row>
   
               {/* ErpEmployeeSkills */}
-              {formData.ErpEmployeeSkills.map((skill, index) => (
+              {/* {formData.ErpEmployeeSkills.map((skill, index) => (
                 <Row key={index}>
                   <Col>
                     <Form.Group controlId={`skill${index}`}>
@@ -575,10 +531,10 @@ const EmployeeForm = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-              ))}
+              ))} */}
   
               {/* ErmEmpExperiences */}
-              {formData.ErmEmpExperiences.map((experience, index) => (
+              {/* {formData.ErmEmpExperiences.map((experience, index) => (
                 <Row key={index}>
                   <Col>
                     <Form.Group controlId={`companyName${index}`}>
@@ -602,8 +558,8 @@ const EmployeeForm = () => {
                     <Form.Group controlId={`designation${index}`}>
                       <Form.Label>Designation:</Form.Label>
                       <Form.Control type="text" name="designation" value={experience.designation} onChange={(e) => handleExperienceChange(index, e)} />
-                    </Form.Group>
-                  </Col>
+                    </Form.Group> */}
+                  {/* </Col>
                   <Col>
                   <Form.Group controlId={`projectsWorkedOn${index}`}>
                       <Form.Label>ProjectWorkedOn:</Form.Label>
@@ -611,19 +567,31 @@ const EmployeeForm = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-              ))}
-                 <card-footer> {/* Should be 'card-footer', not 'card-footer' */}
-              <div className='row'>
-                <div className='col-3'>
-                  <Button variant="primary" type="submit"onClick={SaveEmployee} >Save</Button>
+              ))} */}
+
+              <CardFooter>
+                <div className='row'>
+                  {formData.empId !== 0 ? (
+                    <>
+                      <div className='col-3'>
+                        <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
+                      </div>
+                      <div className='col-3'>
+                        <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className='col-3'>
+                        <Button variant="warning" type="submit" onClick={handleUpdate}>Update</Button>
+                      </div>
+                      <div className='col-3'>
+                        <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
+                      </div>
+                    </>
+                  )}
                 </div>
-                
-                  <div className='col-3'>
-                    <Button variant="danger" type="button" onClick={() => setFormData({...formData, userName: ''})}>Cancel</Button>
-                  </div>
-  
-  </div>
-          </card-footer>
+              </CardFooter>
   
             </Form>
           </Card.Body>
