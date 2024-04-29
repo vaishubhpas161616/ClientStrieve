@@ -3,6 +3,8 @@ import sweetAlertService from "../../Service/sweetAlertServices";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const Change = () => {
   const [empList, setEmpList] = useState([]);
@@ -103,6 +105,45 @@ const Change = () => {
     }
   };
 
+  const onEdit = (formData) => {
+    setProjectChangeList(formData);
+    handleShow();
+  };
+
+  const onDelete = async (projectChangeId) => {
+    const confirmDelete = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this project change !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+    if (confirmDelete.isConfirmed) {
+      try {
+        const result = await axios.delete(
+          `https://freeapi.gerasim.in/api/ClientStrive/DeleteChangeByChangeId?changeId=
+                ${projectChangeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+            },
+          }
+        );
+        if (result.data.data) {
+          Swal.fire("Error!", result.data.data, "error");
+        } else {
+          Swal.fire("Success!", result.data.message, "success");
+          getAllProjectChange();
+        }
+      } catch (error) {
+        console.error("Error deleting client:", error);
+      }
+    }
+  };
+
   return (
     <>
       <div className="container-fluid">
@@ -121,7 +162,7 @@ const Change = () => {
                       className="btn-md m-1 text-right"
                       onClick={handleShow}
                     >
-                      {" "}
+                      <FaPlus />
                       Add
                     </Button>
                   </div>
@@ -136,6 +177,7 @@ const Change = () => {
                       <th>Project Name</th>
                       <th>Company Name</th>
                       <th>Employee Name</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -147,6 +189,24 @@ const Change = () => {
                           <td>{change.projectName}</td>
                           <td>{change.companyName}</td>
                           <td>{change.changeApprovedBy}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-primary m-2"
+                              onClick={() => onEdit(change)}
+                            >
+                              <FaEdit /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-danger"
+                              onClick={() => {
+                                onDelete(change.projectChangeId);
+                              }}
+                            >
+                              <FaTrash /> Delete
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
