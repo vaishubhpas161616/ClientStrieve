@@ -20,6 +20,7 @@ const App = () => {
         <Navbar />
         <BreadCrumb />
         <Routes>
+<<<<<<< HEAD
           <Route path="/Login" element={<Login />} />
           <Route path="/Change-project" element={<Change />} />
           <Route path="/Client" element={<Client />} />
@@ -29,6 +30,15 @@ const App = () => {
           <Route path="/Meeting" element={<Meeting />} />
           <Route path="/Payment" element={<Payment />} />
           <Route path="/Project" element={<Project />} />
+=======
+          <Route path="/login" element={<Login/>} />
+          <Route path="/change-project" element={<Change/>} />
+          <Route path="/client" element={<Client/>} />
+          <Route path="/employee" element={<Employee/>} />
+          <Route path="/meeting" element={<Meeting/>} />
+          <Route path="/payment" element={Payment} />
+          <Route path="/project" element={Project} />
+>>>>>>> 3dd026b8ee96839b04ed8b3beb1d6326a1f03d3d
         </Routes>
       </div>
     </BrowserRouter>
