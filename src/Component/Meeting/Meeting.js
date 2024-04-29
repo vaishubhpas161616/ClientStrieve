@@ -11,6 +11,7 @@ const Meeting = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [getMeetingsList, setGetMeetingsList] = useState([]);
+    const [getmeetingsByProjectId, setgetmeetingsByProjectId] = useState([]);
     const [addUpdateProjectMeeting, setaddUpdateProjectMeeting] = useState(
         {
             projectMeetingId: 0,
@@ -48,6 +49,7 @@ const Meeting = () => {
 
     useEffect(() => {
         getAllMeetings();
+        getAllMeetingsByProjectId();
     }, []);
 
     const onChangeAddUpdateMeeting = (event, key) => {
@@ -64,6 +66,19 @@ const Meeting = () => {
                 }
             });
             setGetMeetingsList(result.data.data);
+        } catch (error) {
+            console.error("Error fetching meetings:", error);
+        }
+    };
+
+    const getAllMeetingsByProjectId = async () => {
+        try {
+            const result = await axios.get("https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetingsByProjectId", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                }
+            });
+            setgetmeetingsByProjectId(result.data.data);
         } catch (error) {
             console.error("Error fetching meetings:", error);
         }
@@ -336,7 +351,7 @@ const Meeting = () => {
                                         <button type='submit' className='btn btn-sm btn-primary' onClick={SaveMeeting} >Add</button>
                                     }
                                 </form>
-                                <button className='btn btn-sm btn-secondary' onClick={onReset}  >Reset</button>
+                                <button className='btn btn-sm btn-secondary' onClick={onReset} >Reset</button>
                             </Modal.Footer>
                         </Modal>
                     </form>
