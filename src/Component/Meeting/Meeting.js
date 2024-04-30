@@ -58,6 +58,11 @@ const Meeting = () => {
         setErrors(prevErrors => ({ ...prevErrors, [key]: '' }));
     }
 
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setaddUpdateProjectMeeting({ ...addUpdateProjectMeeting, [name]: value });
+      };
+
     const getAllMeetings = async () => {
         try {
             const result = await axios.get("https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetings", {
@@ -347,13 +352,17 @@ const Meeting = () => {
                                                     <div className='row'>
                                                         <div className="col-md-6">
                                                             <label>Project Id</label>
-                                                            <select className='form-select' name="projectId">
-                                                                <option value="">Select Project</option>
-                                                                {getmeetingsByProjectId.map((project) => (
-                                                                    <option key={project.projectId} value={project.projectId}>
-                                                                        {project.projectName}
-                                                                    </option>
-                                                                ))}
+                                                            <select className="form-select" name="projectId" value={addUpdateProjectMeeting.projectId} onChange={handleChange}>
+                                                                {getmeetingsByProjectId.map((project) => {
+                                                                    return (
+                                                                        <option
+                                                                            key={project.projectId}
+                                                                            value={project.projectId}
+                                                                        >
+                                                                            {project.projectName}
+                                                                        </option>
+                                                                    );
+                                                                })}
                                                             </select>
 
                                                         </div>
