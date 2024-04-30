@@ -20,17 +20,17 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item">
-                <Link className="nav-link font-weight-bold" to="/Change-project">Change Project</Link>
+                <Link className="nav-link font-weight-bold" to="/Employee">Employee</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link font-weight-bold" to="/Client">Client</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link font-weight-bold" to="/Employee">Employee</Link>
+                <Link className="nav-link font-weight-bold" to="/Change-project">Change Project</Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link font-weight-bold" to="/Employee-form">EmployeeForm</Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link className="nav-link font-weight-bold" to="/Meeting">Meeting</Link>
               </li>
