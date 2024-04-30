@@ -27,24 +27,24 @@ const Meeting = () => {
             clientPersonNames: '',
             meetingTitle: '',
             meetingStatus: ''
-          }
+        }
     );
 
     // State variables for holding error messages
     const [errors, setErrors] = useState({
         projectMeetingId: 0,
-            projectId: 0,
-            meetingLeadByEmpId: 0,
-            meetingDate: '',
-            startTime: '',
-            endTime: '',
-            meetingMedium: '',
-            isRecordingAvailable: true,
-            recordingUrl: '',
-            meetingNotes: '',
-            clientPersonNames: '',
-            meetingTitle: '',
-            meetingStatus: ''
+        projectId: 0,
+        meetingLeadByEmpId: 0,
+        meetingDate: '',
+        startTime: '',
+        endTime: '',
+        meetingMedium: '',
+        isRecordingAvailable: true,
+        recordingUrl: '',
+        meetingNotes: '',
+        clientPersonNames: '',
+        meetingTitle: '',
+        meetingStatus: ''
     });
 
     useEffect(() => {
@@ -132,39 +132,39 @@ const Meeting = () => {
 
     const SaveMeeting = async () => {
         debugger
-         if (validateForm()) {
-             try {
-                 const result = await axios.post(
-                     "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
-                     addUpdateProjectMeeting,
-                     {
-                         headers: {
-                             Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-                         }
-                     }
-                 );
-                 if (result.data.data) {
-                     Swal.fire(
-                         ' Meeting add Success!',
-                          result.data.data,
-                         'success'
-                     );
-                     getAllMeetings();
-                     handleClose()
-                     
-                 } else {
-                     alert(result.data.message);
-                     getAllMeetings();
-                 }
-             } catch (error) {
-                 console.error("Error saving Meeting:", error);
-             }
-             return;
-         }
-     };
+        if (validateForm()) {
+            try {
+                const result = await axios.post(
+                    "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
+                    addUpdateProjectMeeting,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                        }
+                    }
+                );
+                if (result.data.data) {
+                    Swal.fire(
+                        ' Meeting add Success!',
+                        result.data.data,
+                        'success'
+                    );
+                    getAllMeetings();
+                    handleClose()
 
-    
-     const editMeeting = (meeting) => {
+                } else {
+                    alert(result.data.message);
+                    getAllMeetings();
+                }
+            } catch (error) {
+                console.error("Error saving Meeting:", error);
+            }
+            return;
+        }
+    };
+
+
+    const editMeeting = (meeting) => {
         setaddUpdateProjectMeeting(meeting);
         handleShow();
     };
@@ -173,19 +173,19 @@ const Meeting = () => {
         debugger
         setaddUpdateProjectMeeting(
             {
-            projectMeetingId: 0,
-            projectId: 0,
-            meetingLeadByEmpId: 0,
-            meetingDate: '',
-            startTime: '',
-            endTime: '',
-            meetingMedium: '',
-            isRecordingAvailable: true,
-            recordingUrl: '',
-            meetingNotes: '',
-            clientPersonNames: '',
-            meetingTitle: '',
-            meetingStatus: ''
+                projectMeetingId: 0,
+                projectId: 0,
+                meetingLeadByEmpId: 0,
+                meetingDate: '',
+                startTime: '',
+                endTime: '',
+                meetingMedium: '',
+                isRecordingAvailable: true,
+                recordingUrl: '',
+                meetingNotes: '',
+                clientPersonNames: '',
+                meetingTitle: '',
+                meetingStatus: ''
             }
         )
     }
@@ -283,7 +283,7 @@ const Meeting = () => {
                                 </div>
                             </div>
                             <div className='card-body'>
-                            <table className='table table-bordered text-center'>
+                                <table className='table table-bordered text-center'>
                                     <thead>
                                         <tr>
                                             <th>Sr.No</th>
@@ -317,7 +317,7 @@ const Meeting = () => {
                                                 <td>{meeting.meetingTitle}</td>
                                                 <td>{meeting.meetingStatus}</td>
                                                 <td>
-                                                <button type="button" className='btn btn-primary m-2' onClick={() => editMeeting(meeting)}>
+                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editMeeting(meeting)}>
                                                         <FaEdit style={{ marginRight: '5px' }} /> Edit {/* Adjust margin as needed */}
                                                     </button>
                                                     <button type="button" className='btn btn-danger' onClick={() => { OnDelete(meeting.projectId) }}>
@@ -347,23 +347,30 @@ const Meeting = () => {
                                                     <div className='row'>
                                                         <div className="col-md-6">
                                                             <label>Project Id</label>
-                                                            <select name="projecId" id=""  className='form-control'></select>
+                                                            <select className='form-select' name="projectId">
+                                                                <option value="">Select Project</option>
+                                                                {getmeetingsByProjectId.map((project) => (
+                                                                    <option key={project.projectId} value={project.projectId}>
+                                                                        {project.projectName}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
 
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label>Meeting Lead By EmpId</label>
-                                                            <select name="" id=""  className='form-control'></select>
+                                                            <select name="" id="" className='form-control'></select>
                                                         </div>
                                                     </div>
                                                     <div className="row">
                                                         <div className='col-md-6'>
                                                             <label>Meeting Date </label>
-                                                            <input type="date" value={addUpdateProjectMeeting.meetingDate}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingDate')} name='meetingDate' placeholder='Meeting Date' />
+                                                            <input type="date" value={addUpdateProjectMeeting.meetingDate} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingDate')} name='meetingDate' placeholder='Meeting Date' />
                                                             <small className="text-danger">{errors.meetingDate}</small>
                                                         </div>
                                                         <div className='col-md-6'>
                                                             <label>Satrt Time</label>
-                                                            <input type="text" value={addUpdateProjectMeeting.startTime}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'startTime')} name='startTime' placeholder='StarTime' />
+                                                            <input type="text" value={addUpdateProjectMeeting.startTime} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'startTime')} name='startTime' placeholder='StarTime' />
                                                             <small className="text-danger">{errors.startTime}</small>
                                                         </div>
 
@@ -372,12 +379,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className='col-md-6'>
                                                             <label>End Time</label>
-                                                            <input type="text" value={addUpdateProjectMeeting.endTime}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'endTime')} name='endTime' placeholder='End Time' />
+                                                            <input type="text" value={addUpdateProjectMeeting.endTime} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'endTime')} name='endTime' placeholder='End Time' />
                                                             <small className="text-danger">{errors.endTime}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Medium</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.meetingMedium}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingMedium')} name='meetingMedium' placeholder='Meeting Medium' />
+                                                            <input type="text" value={addUpdateProjectMeeting.meetingMedium} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingMedium')} name='meetingMedium' placeholder='Meeting Medium' />
                                                             <small className="text-danger">{errors.meetingMedium}</small>
                                                         </div>
 
@@ -386,12 +393,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Recording Url</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.recordingUrl}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'recordingUrl')} name='recordingUrl' placeholder='Recording Url' />
+                                                            <input type="text" value={addUpdateProjectMeeting.recordingUrl} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'recordingUrl')} name='recordingUrl' placeholder='Recording Url' />
                                                             <small className="text-danger">{errors.recordingUrl}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Notes</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.meetingNotes}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingNotes')} name='meetingDate' placeholder='Meeting Notes' />
+                                                            <input type="text" value={addUpdateProjectMeeting.meetingNotes} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingNotes')} name='meetingDate' placeholder='Meeting Notes' />
                                                             <small className="text-danger">{errors.meetingNotes}</small>
                                                         </div>
 
@@ -399,12 +406,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Client Person Name</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.clientPersonNames}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'clientPersonNames')} name='clientPersonNames' placeholder='Client Person Names' />
+                                                            <input type="text" value={addUpdateProjectMeeting.clientPersonNames} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'clientPersonNames')} name='clientPersonNames' placeholder='Client Person Names' />
                                                             <small className="text-danger">{errors.clientPersonNames}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting Title</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.meetingTitle}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingTitle')} name='meetingTitle' placeholder='Meeting Title' />
+                                                            <input type="text" value={addUpdateProjectMeeting.meetingTitle} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingTitle')} name='meetingTitle' placeholder='Meeting Title' />
                                                             <small className="text-danger">{errors.meetingTitle}</small>
                                                         </div>
 
@@ -412,12 +419,12 @@ const Meeting = () => {
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             <label htmlFor="">Meeting status</label>
-                                                            <input type="text"  value={addUpdateProjectMeeting.meetingStatus}  className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingStatus')} name='meetingStatus' placeholder='Meeting Status' />
+                                                            <input type="text" value={addUpdateProjectMeeting.meetingStatus} className='form-control' onChange={(event) => onChangeAddUpdateMeeting(event, 'meetingStatus')} name='meetingStatus' placeholder='Meeting Status' />
                                                             <small className="text-danger">{errors.meetingStatus}</small>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <label htmlFor="">IsRecording Available</label>
-                                                            <input type="checkbox"  name="" id="" className='form-check' />
+                                                            <input type="checkbox" name="" id="" className='form-check' />
                                                         </div>
                                                     </div>
 
