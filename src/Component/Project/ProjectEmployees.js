@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {  FaTrash } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 
 const ProjectEmployees = () => {
@@ -103,7 +104,11 @@ const ProjectEmployees = () => {
                 }
             });
             if (response.data.result) {
-                toast.error("Data Deleted Successfully");
+                Swal.fire(
+                    'Error!',
+                    response.data.data,
+                    'error'
+                );
                 getAllEmpWorkOnProject();
             } else {
                 toast.error(response.message);

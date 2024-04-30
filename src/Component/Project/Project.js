@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlus,FaEdit,FaTrash  } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 
 const Project = () => {
@@ -131,7 +132,11 @@ const Project = () => {
                 }
             });
             if (response.data.result) {
-                toast.success("Project deleted successfully");
+                Swal.fire(
+                    'Error!',
+                    response.data.data,
+                    'error'
+                );
                 getAllProjects();
             } else {
                 toast.error(response.data.message);
