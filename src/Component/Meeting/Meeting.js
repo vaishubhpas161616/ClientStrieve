@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 
 const Meeting = () => {
@@ -189,6 +189,80 @@ const Meeting = () => {
             }
         )
     }
+
+    const OnDelete = async (projectId) => {
+        const confirmDelete = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this meeting!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        });
+        if (confirmDelete.isConfirmed) {
+            try {
+                const result = await axios.delete(
+                    `https://freeapi.gerasim.in/api/ClientStrive/DeleteMeetingByMeetingId?meetingId=
+                    ${projectId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                        }
+                    }
+                );
+                if (result.data.data) {
+                    Swal.fire(
+                        'Error!',
+                        result.data.data,
+                        'error'
+                    );
+                } else {
+                    Swal.fire(
+                        'Success!',
+                        result.data.message,
+                        'success'
+                    );
+                    getAllMeetings()
+                }
+            } catch (error) {
+                console.error("Error deleting Meeting:", error);
+            }
+        };
+
+    }
+
+
+    const OnUpdate = async () => {
+        try {
+            const result = await axios.post(
+                `https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting`, addUpdateProjectMeeting,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                    }
+                }
+            );
+            if (result.data.data) {
+                Swal.fire(
+                    'Success!',
+                    result.data.data,
+                    'success'
+                );
+            } else {
+                Swal.fire(
+                    'Success!',
+                    result.data.message,
+                    'success'
+                );
+                getAllMeetings();
+                handleClose()
+            }
+        } catch (error) {
+            console.error("Error deleting meeting:", error);
+        }
+    };
     return (
         <div>
             <div className="container-fluid">
@@ -239,7 +313,12 @@ const Meeting = () => {
                                                 <td>{meeting.meetingTitle}</td>
                                                 <td>{meeting.meetingStatus}</td>
                                                 <td>
-                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editMeeting(meeting)}><FaEdit/> Edit</button>
+                                                <button type="button" className='btn btn-primary m-2' onClick={() => editMeeting(meeting)}>
+                                                        <FaEdit style={{ marginRight: '5px' }} /> Edit {/* Adjust margin as needed */}
+                                                    </button>
+                                                    <button type="button" className='btn btn-danger' onClick={() => { OnDelete(meeting.projectId) }}>
+                                                        <FaTrash style={{ marginRight: '5px' }} /> Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -348,7 +427,10 @@ const Meeting = () => {
                             <Modal.Footer>
                                 <form action=""  >
                                     {
-                                        <button type='submit' className='btn btn-sm btn-primary' onClick={SaveMeeting} >Add</button>
+                                        <button type='button' className='btn btn-sm btn-primary m-2' onClick={SaveMeeting} >Add</button>
+                                    }
+                                    {
+                                        <button type='button' className='btn btn-sm btn-warning m-2' onClick={OnUpdate}>Update</button>
                                     }
                                 </form>
                                 <button className='btn btn-sm btn-secondary' onClick={onReset} >Reset</button>
