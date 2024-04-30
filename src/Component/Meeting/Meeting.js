@@ -292,7 +292,7 @@ const Meeting = () => {
                                     <thead>
                                         <tr>
                                             <th>Sr.No</th>
-                                            <th>Project Id</th>
+                                            <th>Project Name</th>
                                             <th>Meeting Lead By EmpId</th>
                                             <th>Meeting Date</th>
                                             <th>Start Time</th>
