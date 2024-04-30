@@ -192,6 +192,7 @@ return (
                         <table className="table">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Project Name</th>
                                     <th>Company Name</th>
                                     <th>Payment Date</th>
@@ -202,8 +203,9 @@ return (
                                 </tr>
                             </thead>
                             <tbody>
-                                {PaymentList.map(payment => (
+                                {PaymentList.map((payment, index) => (
                                     <tr key={payment.projectPaymentId}>
+                                        <td>{index + 1}</td>
                                         <td>{payment.projectName}</td>
                                         <td>{payment.companyName}</td>
                                         <td>{payment.paymentDate}</td>
