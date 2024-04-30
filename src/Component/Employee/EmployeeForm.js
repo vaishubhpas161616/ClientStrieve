@@ -334,6 +334,8 @@ const EmployeeForm = () => {
   
   
     return (
+      <>
+      <div className='mt-2'>
       <Container>
         <Card>
           <Card.Header className="bg-info">Employee Form</Card.Header>
@@ -599,6 +601,8 @@ const EmployeeForm = () => {
           </Card.Body>
         </Card>
       </Container>
+      </div>
+      </>
     );
   };
   

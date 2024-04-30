@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FaPlus,FaEdit,FaTrash  } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 
@@ -30,7 +30,7 @@ const Project = () => {
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        
+
         getAllClients();
         getAllProjects();
         getAllEmployees();
@@ -126,26 +126,41 @@ const Project = () => {
 
     const handleDelete = async (projectId) => {
         try {
-            const response = await axios.delete(`https://freeapi.gerasim.in/api/ClientStrive/DeleteProjectByProjectId?projectId=${projectId}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-                }
+
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to recover this project!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             });
-            if (response.data.result) {
-                Swal.fire(
-                    'Error!',
-                    response.data.data,
-                    'error'
-                );
-                getAllProjects();
-            } else {
-                toast.error(response.data.message);
+
+
+            if (confirmation.isConfirmed) {
+                const response = await axios.delete(`https://freeapi.gerasim.in/api/ClientStrive/DeleteProjectByProjectId?projectId=${projectId}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                    }
+                });
+                if (response.data.result) {
+                    Swal.fire(
+                        'Error!',
+                        response.data.data,
+                        'error'
+                    );
+                    getAllProjects();
+                } else {
+                    toast.error(response.data.message);
+                }
             }
         } catch (error) {
             console.error('Error deleting project:', error);
             toast.error('Error deleting project');
         }
     };
+
 
     const handleEdit = async (projectId) => {
         debugger;
@@ -155,7 +170,7 @@ const Project = () => {
                     Authorization: `Bearer ${localStorage.getItem('loginToken')}`
                 }
             });
-            setFormData( response.data.data);
+            setFormData(response.data.data);
             handleShowModal();
         } catch (error) {
             console.error('Error deleting project:', error);
@@ -183,7 +198,7 @@ const Project = () => {
     const handleShowModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
-    
+
     const IsValidate = () => {
         let isProceed = true;
         let errorMessage = "Please enter the value in ";
@@ -229,16 +244,18 @@ const Project = () => {
 
     return (
         <>
-       
+
             <div className='row'>
                 <div className="col-10 offset-1">
                     <div className="card bg-light">
                         <div className="card-header bg-info">
-                            <div className='d-flex justify-content-between'>
-                                <h1>Project Details</h1>
-                                <div>
+                            <div className="row mt-2">
+                                <div className="col-md-10 text-center ">
+                                    <h1 >Project Details</h1>
+                                </div>
+                                <div className="col-md-2">
                                     <Button variant="primary" onClick={handleShowModal}>
-                                         Add Project<FaPlus style={{ marginRight: '5px' }} />
+                                        Add Project<FaPlus />
                                     </Button>
                                 </div>
                             </div>
@@ -398,19 +415,19 @@ const Project = () => {
 
                         <Row className='mt-2'>
                             <Col>
-                            {
-                                formData.clientProjectId===0 &&
-                                <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
-                                    {loading ? 'Saving...' : 'Submit'}
-                                </Button>
-                            }
-                              {
-                                formData.clientProjectId !==0 &&
-                                <Button variant="warning" className='mx-2' onClick={handleUpdate}>
-                                    {loading ? 'Saving...' : 'Update'}
-                                </Button>
-                              }  
-                                
+                                {
+                                    formData.clientProjectId === 0 &&
+                                    <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
+                                        {loading ? 'Saving...' : 'Submit'}
+                                    </Button>
+                                }
+                                {
+                                    formData.clientProjectId !== 0 &&
+                                    <Button variant="warning" className='mx-2' onClick={handleUpdate}>
+                                        {loading ? 'Saving...' : 'Update'}
+                                    </Button>
+                                }
+
                             </Col>
 
                         </Row>

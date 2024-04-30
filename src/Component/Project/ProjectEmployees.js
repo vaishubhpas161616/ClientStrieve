@@ -96,28 +96,44 @@ const ProjectEmployees = () => {
   
 
     const handleDeleteData = async (id) => {
-        debugger;
         try {
-            const response = await axios.delete(`https://freeapi.gerasim.in/api/ClientStrive/DeleteEmployeeFromProject?projectEmpId=${id}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-                }
+            
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to recover this data!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             });
-            if (response.data.result) {
-                Swal.fire(
-                    'Error!',
-                    response.data.data,
-                    'error'
-                );
-                getAllEmpWorkOnProject();
-            } else {
-                toast.error(response.message);
+    
+            if (confirmation.isConfirmed) {
+                const response = await axios.delete(`https://freeapi.gerasim.in/api/ClientStrive/DeleteEmployeeFromProject?projectEmpId=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('loginToken')}`
+                    }
+                });
+                if (response.data.data) {
+                    Swal.fire(
+                        'Error!',
+                        response.data.data,
+                        'error'
+                    );
+                } else {
+                    Swal.fire(
+                        'Success!',
+                        response.data.message,
+                        'success'
+                    );
+                    getAllEmpWorkOnProject();
+                }
             }
         } catch (error) {
             console.error('Error deleting data:', error);
         }
     };
-
+    
     const handleReset = () => {
         setProjectEmpObj({
             "projectEmpId": 0,

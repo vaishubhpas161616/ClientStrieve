@@ -19,7 +19,7 @@ const Layout = () => {
                     <Route path="/change-project" element={<Change />} />
                     <Route path="/client" element={<Client />} />
                     <Route path="/employee" element={<Employee />} />
-                    <Route path="/employee-form" element={<EmployeeForm />} />
+                    <Route path="/employee-form/:empId?" element={<EmployeeForm />} />
                     <Route path="/meeting" element={<Meeting />} />
                     <Route path="/payment" element={<Payment />} />
                     <Route path="/project" element={<Project />} />
