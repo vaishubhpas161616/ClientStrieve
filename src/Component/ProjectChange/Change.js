@@ -13,7 +13,7 @@ const Change = () => {
   const [formData, setFormData] = useState({
     projectChangeId: 0,
     projectId: 0,
-    changeDetails: "string",
+    changeDetails: "",
     changeDate: "",
     approvedByEmpId: 0,
   });
@@ -23,6 +23,11 @@ const Change = () => {
     setShow(false);
     handleReset();
   };
+
+  const onResetClick = () => {
+    handleReset();
+  };
+
   const handleShow = () => setShow(true);
 
   const handleChange = (event) => {
@@ -155,11 +160,11 @@ const Change = () => {
               <div className="card-header bg-info">
                 <div className="row mt-2">
                   <div className="col-md-10 text-start">
-                    Get All Project Change List
+                    <h4 className="text-center">Get All Project Change List</h4>
                   </div>
                   <div className="col-md-2 text-end">
                     <Button
-                      variant="primary"
+                      variant="success"
                       className="btn-md m-1 text-right"
                       onClick={handleShow}
                     >
@@ -193,19 +198,19 @@ const Change = () => {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-primary m-2"
+                              className="btn btn-col-2 btn-primary mx-2"
                               onClick={() => onEdit(change)}
                             >
-                              <FaEdit /> Edit
+                              <FaEdit style={{ marginRight: "5px" }} /> Edit
                             </button>
                             <button
                               type="button"
-                              className="btn btn-danger"
+                              className="btn btn-col-2 btn-danger mx-2"
                               onClick={() => {
                                 onDelete(change.projectChangeId);
                               }}
                             >
-                              <FaTrash /> Delete
+                              <FaTrash style={{ marginRight: "5px" }} /> Delete
                             </button>
                           </td>
                         </tr>
@@ -233,6 +238,7 @@ const Change = () => {
                     value={formData.projectId}
                     onChange={handleChange}
                   >
+                    <option>Select Project</option>
                     {clientProjectList.map((rol) => {
                       return (
                         <option
@@ -265,13 +271,14 @@ const Change = () => {
                   />
                 </Form.Group>
                 <Form.Group controlId="approvedByEmpId" className="mb-1">
-                  <Form.Label>Employee:</Form.Label>
+                  <Form.Label>Select Employee:</Form.Label>
                   <select
                     className="form-select"
                     name="approvedByEmpId"
                     value={formData.approvedByEmpId}
                     onChange={handleChange}
                   >
+                    <option>Select Employee</option>
                     {empList.map((emp) => {
                       return (
                         <option key={emp.empId} value={emp.empId}>
@@ -281,20 +288,20 @@ const Change = () => {
                     })}
                   </select>
                 </Form.Group>
-                {formData.projectChangeId === 0 ? (
-                  <Button variant="primary" type="submit" className="mt-2">
-                    Submit
-                  </Button>
-                ) : (
-                  <Button variant="warning" type="submit" className="mt-2">
-                    Update
-                  </Button>
-                )}
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                Close
+              {formData.projectChangeId === 0 ? (
+                <Button variant="primary" type="submit" className="mt-2">
+                  Submit
+                </Button>
+              ) : (
+                <Button variant="warning" type="submit" className="mt-2">
+                  Update
+                </Button>
+              )}
+              <Button variant="secondary" onClick={onResetClick}>
+                Reset
               </Button>
             </Modal.Footer>
           </Modal>
