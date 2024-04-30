@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {  FaTrash } from 'react-icons/fa';
+
 
 const ProjectEmployees = () => {
     const [projectEmpObj, setProjectEmpObj] = useState({
@@ -90,11 +92,8 @@ const ProjectEmployees = () => {
         }
     };
 
-    const handleUpdate=()=>{
+  
 
-    }
-
-   
     const handleDeleteData = async (id) => {
         debugger;
         try {
@@ -158,9 +157,9 @@ const ProjectEmployees = () => {
 
             <div className='row'>
                 <div className="col-5 offset-1">
-                    <div className="card">
-                        <div className="crad-header d-flex justify-content-between align-center p-2">
-                            <h5>Project Lead Employees</h5>
+                    <div className="card bg-light">
+                        <div className="crad-header bg-info p-2">
+                            <h4 className='text-center'>Project Lead Employees</h4>
                         </div>
                         <div className="card-body">
                             <table className='table table-bordered '>
@@ -180,8 +179,8 @@ const ProjectEmployees = () => {
                                                     <td>{item.empName}</td>
                                                     <td>{item.projectName}</td>
                                                     <td>{item.addedDate}</td>
-                                                    <td>                                                    
-                                                        <button className='btn btn-danger' onClick={() => handleDeleteData(item.projectEmpId)}>Delete</button>
+                                                    <td>
+                                                        <button className='btn btn-danger' onClick={() => handleDeleteData(item.projectEmpId)}><FaTrash style={{ marginRight: '5px' }} />Delete</button>
                                                     </td>
                                                 </tr>
                                             )
@@ -193,9 +192,9 @@ const ProjectEmployees = () => {
                     </div>
                 </div>
                 <div className='col-5'>
-                    <div className="card">
-                        <div className="card-header">
-                            <h5>Project Employee Form</h5>
+                    <div className="card bg-light">
+                        <div className="card-header bg-info p-2">
+                            <h4 className=' text-center'>Project Employee Form</h4>
                         </div>
                         <div className="card-body">
                             <Row>
@@ -216,7 +215,7 @@ const ProjectEmployees = () => {
                                     <Form.Group controlId="clientId">
                                         <Form.Label>Project Name</Form.Label>
                                         <select className='form-select' name="projectId" value={projectEmpObj.projectId} onChange={handleChange}>
-                                        <option value="">Select Project</option>
+                                            <option value="">Select Project</option>
                                             {allProjects.map((project) => (
                                                 <option key={project.clientProjectId} value={project.clientProjectId}>
                                                     {project.projectName}
@@ -237,11 +236,11 @@ const ProjectEmployees = () => {
                             </Row>
                             <Row className='mt-2'>
                                 <Col>
-                                    
-                                        <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
-                                            Submit
-                                        </Button>
-                                  
+
+                                    <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
+                                        Submit
+                                    </Button>
+
                                     <Button variant="danger" onClick={handleReset}>
                                         Reset
                                     </Button>

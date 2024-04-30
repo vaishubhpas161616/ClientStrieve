@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { FaPlus,FaEdit,FaTrash  } from 'react-icons/fa';
+
 
 const Project = () => {
     const [loading, setLoading] = useState(false);
@@ -26,7 +27,6 @@ const Project = () => {
     });
     console.log(formData)
     const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         
@@ -178,10 +178,7 @@ const Project = () => {
     const handleShowModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
-    const navigateToEmployeeForm = () => {
-        navigate("/ProjectEmployees"); // Assuming 'projectTable' is the correct route
-    };
-
+    
     const IsValidate = () => {
         let isProceed = true;
         let errorMessage = "Please enter the value in ";
@@ -230,18 +227,13 @@ const Project = () => {
        
             <div className='row'>
                 <div className="col-10 offset-1">
-                    <div className="card">
-                        <div className="card-header">
+                    <div className="card bg-light">
+                        <div className="card-header bg-info">
                             <div className='d-flex justify-content-between'>
                                 <h1>Project Details</h1>
                                 <div>
                                     <Button variant="primary" onClick={handleShowModal}>
-                                        Project Form
-                                    </Button>
-                                </div>
-                                <div>
-                                    <Button variant="primary" onClick={navigateToEmployeeForm}>
-                                        Create Employee Work On Project
+                                         Add Project<FaPlus style={{ marginRight: '5px' }} />
                                     </Button>
                                 </div>
                             </div>
@@ -273,8 +265,8 @@ const Project = () => {
                                             <td>{project.startDate}</td>
                                             <td>{project.expectedEndDate}</td>
                                             <td>
-                                                <button className='btn btn-success mx-1' onClick={() => handleEdit(project.clientProjectId)}>Edit</button>
-                                                <button className='btn btn-danger' onClick={() => handleDelete(project.clientProjectId)}>Delete</button>
+                                                <button className='btn btn-success mx-1' onClick={() => handleEdit(project.clientProjectId)}><FaEdit style={{ marginRight: '5px' }} />Edit</button>
+                                                <button className='btn btn-danger' onClick={() => handleDelete(project.clientProjectId)}><FaTrash style={{ marginRight: '5px' }} />Delete</button>
                                             </td>
                                         </tr>
                                     ))}
