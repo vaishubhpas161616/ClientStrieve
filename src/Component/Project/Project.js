@@ -82,7 +82,7 @@ const Project = () => {
 
     const handleSave = async () => {
         if (IsValidate()) {
-            setLoading(true)
+
             try {
                 const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClientProject", formData, {
                     headers: {
@@ -92,12 +92,12 @@ const Project = () => {
                 if (response.data.result) {
                     toast.success("Project added successfully");
                     handleReset();
-                    getAllProjects();
-                    setLoading(false)
+                   handleCloseModal();
 
                 } else {
                     toast.error(response.data.message);
                 }
+                getAllProjects();
             } catch (error) {
                 console.error('Error adding project:', error);
                 toast.error('Error adding project');
@@ -107,14 +107,13 @@ const Project = () => {
 
     const handleUpdate = async () => {
         try {
-            setLoading(true)
+            
             const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClientProject", formData);
             if (response.data.result) {
                 toast.success("Project added successfully");
                 handleReset();
                 handleCloseModal();
                 getAllProjects();
-                setLoading(false)
             } else {
                 toast.error(response.data.message);
             }
@@ -417,7 +416,7 @@ const Project = () => {
                             <Col>
                                 {
                                     formData.clientProjectId === 0 &&
-                                    <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
+                                    <Button variant="primary" className='mx-2' onClick={handleSave}>
                                         {loading ? 'Saving...' : 'Submit'}
                                     </Button>
                                 }
