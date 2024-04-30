@@ -10,7 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 
 const Payment = () => {
-    const [ClientList, setClientList] = useState([]);
     const [ClientProjectList, setClientProjectList] = useState([]);
     const [PaymentList, setPaymentList] = useState([]);
     const [show, setShow] = useState(false);
@@ -25,7 +24,6 @@ const Payment = () => {
 
     useEffect(() => {
         getAllPaymentList();
-        getAllClient();
         getAllClientProject();
     }, []);
 
@@ -44,20 +42,7 @@ const Payment = () => {
         }
     };
 
-    const getAllClient = async () => {
-        try {
-            const response = await axios.get("https://freeapi.gerasim.in/api/ClientStrive/GetAllClients", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('loginToken')}`
-                }
-            });
-            if (response.data.result === true) {
-                setClientList(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching client list:', error);
-        }
-    };
+    
 
     const getAllClientProject = async () => {
         try {
@@ -95,7 +80,7 @@ const Payment = () => {
             if (response.data.result) {
                 Swal.fire(
                     'Success!',
-                    'Payment Deleted Successfully',
+                    'PaymentList Deleted Successfully',
                     'success'
                 );
                 getAllPaymentList();

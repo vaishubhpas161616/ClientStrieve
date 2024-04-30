@@ -3,6 +3,8 @@ import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+
 
 const Client = () => {
     const [show, setShow] = useState(false);
@@ -10,7 +12,7 @@ const Client = () => {
     const handleShow = () => setShow(true);
     const [getAllClientList, setGetAllClientList] = useState([]);
     const [addUpdateClient, setAddUpdateClient] = useState({
-        clientId: '',
+        clientId: 0,
         contactPersonName: '',
         companyName: '',
         address: '',
@@ -107,8 +109,8 @@ const Client = () => {
         return isValid;
     }
     const SaveClient = async () => {
-        onreset();
-        if (!validateForm()) {
+        debugger
+        if (validateForm()) {
             try {
                 const result = await axios.post(
                     "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClient",
@@ -120,9 +122,17 @@ const Client = () => {
                     }
                 );
                 if (result.data.data) {
-                    alert(result.data.data);
+                    Swal.fire(
+                        ' Client add Success!',
+                        result.data.data,
+                        'success'
+                    );
+                    getAllClient();
+                    handleClose()
+
                 } else {
                     alert(result.data.message);
+                    getAllClient();
                 }
             } catch (error) {
                 console.error("Error saving client:", error);
@@ -176,15 +186,15 @@ const Client = () => {
                 );
                 if (result.data.data) {
                     Swal.fire(
-                        'Success!',
+                        'Error!',
                         result.data.data,
-                        'success'
+                        'error'
                     );
                 } else {
                     Swal.fire(
-                        'Error!',
+                        'Success!',
                         result.data.message,
-                        'error'
+                        'success'
                     );
                     getAllClient()
                 }
@@ -227,10 +237,8 @@ const Client = () => {
 
     return (
         <div>
-            {JSON.stringify(addUpdateClient)}
             <div className="container-fluid">
                 <div className='row mt-3'>
-                    <div className='col-md-1'></div>
                     <div className='col-md-10'>
                         <div className='card bg-light'>
                             <div className='card-header bg-info'>
@@ -239,7 +247,7 @@ const Client = () => {
                                         <h4 >Get All Client List</h4>
                                     </div>
                                     <div className="col-md-2">
-                                        <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}> Add</Button>
+                                        <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}>Add<FaPlus /></Button>
                                     </div>
                                 </div>
                             </div>
@@ -268,9 +276,14 @@ const Client = () => {
                                                 <td>{client.gstNo}</td>
                                                 <td>{client.regNo}</td>
                                                 <td>
-                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editClient(client)}>Edit</button>
-                                                    <button type="button" className='btn btn-danger' onClick={() => { onDelete(client.clientId) }}>Delete</button>
+                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editClient(client)}>
+                                                        <FaEdit style={{ marginRight: '5px' }} /> Edit {/* Adjust margin as needed */}
+                                                    </button>
+                                                    <button type="button" className='btn btn-danger' onClick={() => { onDelete(client.clientId) }}>
+                                                        <FaTrash style={{ marginRight: '5px' }} /> Delete
+                                                    </button>
                                                 </td>
+
                                             </tr>
                                         ))}
                                     </tbody>
