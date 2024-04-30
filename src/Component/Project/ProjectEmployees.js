@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import {  FaTrash } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 
@@ -93,11 +93,11 @@ const ProjectEmployees = () => {
         }
     };
 
-  
+
 
     const handleDeleteData = async (id) => {
         try {
-            
+
             const confirmation = await Swal.fire({
                 title: 'Are you sure?',
                 text: 'You will not be able to recover this data!',
@@ -107,7 +107,7 @@ const ProjectEmployees = () => {
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete it!'
             });
-    
+
             if (confirmation.isConfirmed) {
                 const response = await axios.delete(`https://freeapi.gerasim.in/api/ClientStrive/DeleteEmployeeFromProject?projectEmpId=${id}`, {
                     headers: {
@@ -133,7 +133,7 @@ const ProjectEmployees = () => {
             console.error('Error deleting data:', error);
         }
     };
-    
+
     const handleReset = () => {
         setProjectEmpObj({
             "projectEmpId": 0,
@@ -166,7 +166,7 @@ const ProjectEmployees = () => {
         }
 
         if (!isProceed) {
-            toast.warning(errorMessage.slice(0, -2)); // Remove the trailing comma and space
+            toast.warning(errorMessage.slice(0, -2));
         }
 
         return isProceed;
@@ -175,7 +175,6 @@ const ProjectEmployees = () => {
 
     return (
         <>
-
             <div className='row'>
                 <div className="col-5 offset-1">
                     <div className="card bg-light">
@@ -196,7 +195,7 @@ const ProjectEmployees = () => {
                                     {
                                         allProjjectEmployees.map((item) => {
                                             return (
-                                                <tr>
+                                                <tr key={item.projectEmpId}>
                                                     <td>{item.empName}</td>
                                                     <td>{item.projectName}</td>
                                                     <td>{item.addedDate}</td>
