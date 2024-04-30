@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from './Component/Navbar/Navbar';
 import BreadCrumb from './utility/BreadCrumb';
@@ -17,6 +19,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <div>
+      <ToastContainer />
         <Navbar />
         <BreadCrumb />
         <Routes>
@@ -25,7 +28,7 @@ const App = () => {
           <Route path="/client" element={<Client/>} />
           <Route path="/employee" element={<Employee/>} />
           <Route path="/meeting" element={<Meeting/>} />
-          <Route path="/payment" element={Payment} />
+          <Route path="/payment" element={<Payment></Payment>} />
           <Route path="/project" element={Project} />
         </Routes>
       </div>
