@@ -34,7 +34,7 @@ const Change = () => {
     setFormData({
       projectChangeId: 0,
       projectId: 0,
-      changeDetails: "string",
+      changeDetails: "",
       changeDate: "",
       approvedByEmpId: 0,
     });
@@ -105,8 +105,9 @@ const Change = () => {
     }
   };
 
-  const onEdit = (formData) => {
-    setProjectChangeList(formData);
+  const onEdit = (changeObj) => {
+    debugger;
+    setFormData(changeObj);
     handleShow();
   };
 
