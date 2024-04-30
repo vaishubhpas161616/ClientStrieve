@@ -264,7 +264,7 @@ const EmployeeForm = () => {
   // };
 
   const SaveEmployee = async () => {
-    if (true) {
+    if (validateForm()) {
       try {
         debugger;
         const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/CreateNewEmployee", formData, {
@@ -273,15 +273,15 @@ const EmployeeForm = () => {
           }
         });
         if (result.data.result) {
-          alert("Data saved successfully");
+          toast.success("Data saved successfully");
           // Reset form data after saving
 
         } else {
-          alert(result.data.message);
+          toast.error(result.data.message);
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("An error occurred while saving data");
+        toast.error("An error occurred while saving data");
       }
     }
   };
