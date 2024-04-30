@@ -110,21 +110,20 @@ const EmployeeForm = () => {
     setDesignation(response.data.data);
   }
     
-  const isEditing=()=>
-  {
-
-  }
+  const isEditing = () => {
+    return !!empId; // If empId exists, it's in editing mode
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
     if (isFormValid) {
       try {
-        if (!isEditing) {
+        if (!isEditing()) {
           // If not in editing mode, call SaveEmployee
           await SaveEmployee();
         } else {
-          // If in editing mode, perform other action
-          console.log("Update action");
+          // If in editing mode, call handleUpdate
+          await handleUpdate(empId);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -134,6 +133,7 @@ const EmployeeForm = () => {
       console.log('Form validation failed');
     }
   };
+  
 
  
 
@@ -309,23 +309,19 @@ const EmployeeForm = () => {
   };
   
  
-
-  const handleUpdate = async () => {
+ 
+  const handleUpdate = async (empid) => {
     try {
-      debugger;
-    
       const result = await axios.put(
-        "https://freeapi.gerasim.in/api/ClientStrive/UpdateEmployee", formData, 
+        "https://freeapi.gerasim.in/api/ClientStrive/UpdateEmployee", formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('loginToken')}`
           }
         }
       );
-      debugger;
       if (result.data.result) {
         alert("Data updated successfully");
-        // Optionally, you can update the local state or perform any other action upon successful update
       } else {
         alert(result.data.message);
       }
@@ -571,16 +567,7 @@ const EmployeeForm = () => {
 
               <CardFooter>
                 <div className='row'>
-                  {formData.empId !== 0 ? (
-                    <>
-                      <div className='col-3'>
-                        <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
-                      </div>
-                      <div className='col-3'>
-                        <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
-                      </div>
-                    </>
-                  ) : (
+                  {/* {formData.empId !== 0 ? (
                     <>
                       <div className='col-3'>
                         <Button variant="warning" type="submit" onClick={handleUpdate}>Update</Button>
@@ -589,8 +576,23 @@ const EmployeeForm = () => {
                         <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
                       </div>
                     </>
-                  )}
-                </div>
+                  ) : (
+                    <>
+                      <div className='col-3'>
+                        <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
+                      </div>
+                      <div className='col-3'>
+                        <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
+                      </div>
+                    </>
+                  )} */}
+                 <div className='col-4'>
+                  
+                 <Button variant="warning" type="submit" onClick={handleUpdate}>Update</Button>
+                 <Button variant="danger" type="button" onClick={() => setFormData({ ...formData, userName: '' })}>Cancel</Button>
+                 <Button variant="primary" type="submit" onClick={SaveEmployee}>Save</Button>
+                </div> </div>
+
               </CardFooter>
   
             </Form>

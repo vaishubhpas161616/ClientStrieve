@@ -36,10 +36,11 @@ const Employee = () => {
     navigate('/employee-form');
   };
 
+
   const handleDelete = async (empId) => {
     try {
       const result = await axios.delete(
-        `https://freeapi.gerasim.in/api/ClientStrive/DeleteEmployeeByEmpId?empId=${empId}`,
+        "https://freeapi.gerasim.in/api/ClientStrive/DeleteEmployeeByEmpId?empId="+empId,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('loginToken')}`
@@ -57,7 +58,6 @@ const Employee = () => {
       alert("An error occurred while deleting data");
     }
   };
-  
   return (
     <div>
       <div className='row mt-3'>
