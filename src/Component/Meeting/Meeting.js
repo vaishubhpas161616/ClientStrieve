@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 
 const Meeting = () => {
@@ -277,7 +277,7 @@ const Meeting = () => {
                                     </div>
                                     <div className="col-md-2">
                                         <React.Fragment>
-                                            <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}> Add</Button>
+                                            <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}>Add<FaPlus /></Button>
                                         </React.Fragment>
                                     </div>
                                 </div>
@@ -287,6 +287,8 @@ const Meeting = () => {
                                     <thead>
                                         <tr>
                                             <th>Sr.No</th>
+                                            <th>Project Id</th>
+                                            <th>Meeting Lead By EmpId</th>
                                             <th>Meeting Date</th>
                                             <th>Start Time</th>
                                             <th>End Time</th>
@@ -303,6 +305,8 @@ const Meeting = () => {
                                         {getMeetingsList.map((meeting, index) => (
                                             <tr key={index + 1}>
                                                 <td>{index + 1}</td>
+                                                <td>{meeting.projectId}</td>
+                                                <td>{meeting.meetingLeadByEmpId}</td>
                                                 <td>{meeting.meetingDate}</td>
                                                 <td>{meeting.startTime}</td>
                                                 <td>{meeting.endTime}</td>
