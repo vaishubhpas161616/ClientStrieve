@@ -137,16 +137,16 @@ const AddPayment = async () => {
     }
 };
 
-const resetPaymentobj = () => {
-    setPaymentobj({
-        "projectPaymentId": 0,
-        "projectId": 0,
-        "paymentDate": "",
-        "paymentMode": "",
-        "amount": 0,
-        "naration": ""
-    });
-};
+// const resetPaymentobj = () => {
+//     setPaymentobj({
+//         "projectPaymentId": 0,
+//         "projectId": 0,
+//         "paymentDate": "",
+//         "paymentMode": "",
+//         "amount": 0,
+//         "naration": ""
+//     });
+// };
 
 const UpdatePayment = async () => {
     if (!validatePayment()) {
@@ -169,8 +169,8 @@ const UpdatePayment = async () => {
         console.error('Error updating payment:', error);
         toast.error('Error updating payment');
     }
-    resetPaymentobj();
-    setShow(true);
+    //resetPaymentobj();
+    //setShow(true);
 };
 
 
@@ -256,7 +256,7 @@ return (
                                         </div>
                                         <div className='col-md-6'>
                                             <label>Payment Date</label>
-                                            <input type="Date" className='form-control' value={Paymentobj.paymentDate}
+                                            <input type="Date-time-local" className='form-control' value={Paymentobj.paymentDate}
                                                 placeholder='Enter date' onChange={(event) => handleChange(event, 'paymentDate')} />
                                         </div>
                                     </div>
