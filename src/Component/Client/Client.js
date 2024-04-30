@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaPlus,FaEdit,FaTrash  } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 
 const Client = () => {
@@ -109,7 +109,7 @@ const Client = () => {
         return isValid;
     }
     const SaveClient = async () => {
-       debugger
+        debugger
         if (validateForm()) {
             try {
                 const result = await axios.post(
@@ -124,12 +124,12 @@ const Client = () => {
                 if (result.data.data) {
                     Swal.fire(
                         ' Client add Success!',
-                         result.data.data,
+                        result.data.data,
                         'success'
                     );
                     getAllClient();
                     handleClose()
-                    
+
                 } else {
                     alert(result.data.message);
                     getAllClient();
@@ -188,12 +188,12 @@ const Client = () => {
                     Swal.fire(
                         'Error!',
                         result.data.data,
-                            'error'
+                        'error'
                     );
                 } else {
                     Swal.fire(
                         'Success!',
-                         result.data.message,
+                        result.data.message,
                         'success'
                     );
                     getAllClient()
@@ -248,7 +248,7 @@ const Client = () => {
                                         <h4 >Get All Client List</h4>
                                     </div>
                                     <div className="col-md-2">
-                                        <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}>Add<FaPlus/></Button>
+                                        <Button variant="success" className='btn-md m-1 text-right' onClick={handleShow}>Add<FaPlus /></Button>
                                     </div>
                                 </div>
                             </div>
@@ -277,9 +277,14 @@ const Client = () => {
                                                 <td>{client.gstNo}</td>
                                                 <td>{client.regNo}</td>
                                                 <td>
-                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editClient(client)}><FaEdit/> Edit</button>
-                                                    <button type="button" className='btn btn-danger' onClick={() => { onDelete(client.clientId) }}><FaTrash/> Delete</button>
+                                                    <button type="button" className='btn btn-primary m-2' onClick={() => editClient(client)}>
+                                                        <FaEdit style={{ marginRight: '5px' }} /> Edit {/* Adjust margin as needed */}
+                                                    </button>
+                                                    <button type="button" className='btn btn-danger' onClick={() => { onDelete(client.clientId) }}>
+                                                        <FaTrash style={{ marginRight: '5px' }} /> Delete
+                                                    </button>
                                                 </td>
+
                                             </tr>
                                         ))}
                                     </tbody>
