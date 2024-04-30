@@ -1,8 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+// import BreadCrumb from '';
+
 
 const Navbar = () => {
+  const onLogout = () => {
+    localStorage.removeItem("loginToken");
+
+  }
+
   return (
+    <>
     <nav className="navbar navbar-expand-lg navbar-light bg-info">
       <div className="container">
         <Link className="navbar-brand" to="/">Navbar</Link>
@@ -41,8 +49,11 @@ const Navbar = () => {
             <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
           </div>
         </div>
-      </div>
-    </nav>
+        </div>
+      </nav>
+      {/* <BreadCrumb/> */}
+    </>
+
   );
 };
 
