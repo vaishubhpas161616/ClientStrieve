@@ -26,28 +26,31 @@ const Navbar = () => {
                 <Link className="nav-link font-weight-bold" to="/Client">Client</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link font-weight-bold" to="/Change-project"> Project Change</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link font-weight-bold" to="/Meeting">Meeting</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link font-weight-bold" to="/Payment">Payment</Link>
-              </li>
-              <li className="nav-item">
                 <Link className="nav-link font-weight-bold" to="/Project">Project</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link font-weight-bold" to="/projectEmployees">Project Employees</Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link font-weight-bold" to="/Meeting">Meeting</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link font-weight-bold" to="/Change-project">Change Project</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link font-weight-bold" to="/Payment">Payment</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link font-weight-bold" to="/projectDetails">Project Details</Link>
+              </li>
             </ul>
           </div>
         </div>
         <div className="d-flex ">
-          <div className="d-flex ">
+          {/* <div className="d-flex ">
             <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
             <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </div>
+          </div> */}
           <div style={{ marginLeft: '20px' }}>
             <button className='btn btn-danger'><Link className="nav-link" to="/login" onClick={onLogout}>Log-Out</Link></button>
           </div>

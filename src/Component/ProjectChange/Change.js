@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import sweetAlertService from "../../Service/sweetAlertServices";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
+import Spinner from "react-bootstrap/Spinner";
 
 const Change = () => {
   const [empList, setEmpList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [clientProjectList, setClientProjectList] = useState([]);
   const [projectChangeList, setProjectChangeList] = useState([]);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     projectChangeId: 0,
     projectId: 0,
-    changeDetails: "string",
+    changeDetails: "",
     changeDate: "",
     approvedByEmpId: 0,
   });
@@ -23,6 +26,7 @@ const Change = () => {
     setShow(false);
     handleReset();
   };
+
   const handleShow = () => setShow(true);
 
   const handleChange = (event) => {
@@ -31,6 +35,7 @@ const Change = () => {
   };
 
   const handleReset = () => {
+    setIsFormSubmitted(false);
     setFormData({
       projectChangeId: 0,
       projectId: 0,
@@ -65,15 +70,21 @@ const Change = () => {
   };
 
   const getAllProjectChange = async () => {
-    const response = await axios.get(
-      "https://freeapi.gerasim.in/api/ClientStrive/GetAllProjectChange",
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-        },
-      }
-    );
-    setProjectChangeList(response.data.data);
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        "https://freeapi.gerasim.in/api/ClientStrive/GetAllProjectChange",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+          },
+        }
+      );
+      setProjectChangeList(response.data.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching project change:", error);
+    }
   };
 
   useEffect(() => {
@@ -82,26 +93,63 @@ const Change = () => {
     getAllProjectChange();
   }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSave = async () => {
+    setIsFormSubmitted(true);
 
-    try {
-      const response = await axios.post(
-        "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-          },
+    if (
+      formData.changeDetails !== "" &&
+      formData.changeDate !== "" &&
+      formData.approvedByEmpId !== "" &&
+      formData.projectId !== ""
+    ) {
+      try {
+        const response = await axios.post(
+          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+            },
+          }
+        );
+        if (response.data.result) {
+          toast.success("Data inserted Successfully");
+          handleClose();
+          getAllProjectChange();
         }
-      );
-      if (response.data.result) {
-        toast.success("Data inserted Successfully");
-        handleClose();
-        getAllProjectChange();
+      } catch (error) {
+        toast.error("Error:", error);
       }
-    } catch (error) {
-      toast.error("Error:", error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    setIsFormSubmitted(true);
+
+    if (
+      formData.changeDetails !== "" &&
+      formData.changeDate !== "" &&
+      formData.approvedByEmpId !== "" &&
+      formData.projectId !== ""
+    ) {
+      try {
+        const response = await axios.post(
+          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+            },
+          }
+        );
+        if (response.data.result) {
+          toast.success("Data inserted Successfully");
+          handleClose();
+          getAllProjectChange();
+        }
+      } catch (error) {
+        toast.error("Error:", error);
+      }
     }
   };
 
@@ -155,7 +203,7 @@ const Change = () => {
               <div className="card-header bg-info">
                 <div className="row mt-2">
                   <div className="col-md-10 text-start">
-                    <h4 className="text-center">Get All Project Change List</h4>
+                    <h4 className="text-start">Get All Project Change List</h4>
                   </div>
                   <div className="col-md-2 text-end">
                     <Button
@@ -177,40 +225,60 @@ const Change = () => {
                       <th>Change Details</th>
                       <th>Project Name</th>
                       <th>Company Name</th>
-                      <th>Employee Name</th>
+                      <th>Approved By Employee</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {projectChangeList.map((change, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{change.changeDetails}</td>
-                          <td>{change.projectName}</td>
-                          <td>{change.companyName}</td>
-                          <td>{change.changeApprovedBy}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="btn btn-primary m-2"
-                              onClick={() => onEdit(change)}
-                            >
-                              <FaEdit /> Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-danger"
-                              onClick={() => {
-                                onDelete(change.projectChangeId);
-                              }}
-                            >
-                              <FaTrash /> Delete
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {isLoading ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ height: 200 }}
+                      >
+                        <Button variant="primary" disabled>
+                          <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                          Loading...
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        {projectChangeList.map((change, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{change.changeDetails}</td>
+                              <td>{change.projectName}</td>
+                              <td>{change.companyName}</td>
+                              <td>{change.changeApprovedBy}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn btn-col-2 btn-primary mx-2"
+                                  onClick={() => onEdit(change)}
+                                >
+                                  <FaEdit />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-col-2 btn-danger mx-2"
+                                  onClick={() => {
+                                    onDelete(change.projectChangeId);
+                                  }}
+                                >
+                                  <FaTrash />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -224,26 +292,73 @@ const Change = () => {
               <Modal.Title>Project Change</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="projectId" className="mb-1">
-                  <Form.Label>Select Project:</Form.Label>
+              <Form>
+                <Row>
+                  <Col>
+                    <Form.Group controlId="projectId" className="mb-1">
+                      <Form.Label>Select Project:</Form.Label>
+                      <select
+                        className="form-select"
+                        name="projectId"
+                        value={formData.projectId}
+                        onChange={handleChange}
+                      >
+                        <option>Select Project</option>
+                        {clientProjectList.map((rol) => {
+                          return (
+                            <option
+                              key={rol.clientProjectId}
+                              value={rol.clientProjectId}
+                            >
+                              {rol.projectName}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      {isFormSubmitted && formData.projectId === 0 && (
+                        <div className="text-danger">
+                          This field is required.
+                        </div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="changeDate" className="mb-1">
+                      <Form.Label>Change Date:</Form.Label>
+                      <Form.Control
+                        type="date"
+                        name="changeDate"
+                        value={formData.changeDate.split("T")[0]}
+                        onChange={handleChange}
+                      />
+                      {isFormSubmitted && formData.changeDate === "" && (
+                        <div className="text-danger">
+                          This field is required.
+                        </div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Form.Group controlId="approvedByEmpId" className="mb-1">
+                  <Form.Label>Approved By Employee:</Form.Label>
                   <select
                     className="form-select"
-                    name="projectId"
-                    value={formData.projectId}
+                    name="approvedByEmpId"
+                    value={formData.approvedByEmpId}
                     onChange={handleChange}
                   >
-                    {clientProjectList.map((rol) => {
+                    <option>Select Employee</option>
+                    {empList.map((emp) => {
                       return (
-                        <option
-                          key={rol.clientProjectId}
-                          value={rol.clientProjectId}
-                        >
-                          {rol.projectName}
+                        <option key={emp.empId} value={emp.empId}>
+                          {emp.empName}
                         </option>
                       );
                     })}
                   </select>
+                  {isFormSubmitted && formData.approvedByEmpId === 0 && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
                 <Form.Group controlId="changeDetails" className="mb-1">
                   <Form.Label>Change Details:</Form.Label>
@@ -254,47 +369,28 @@ const Change = () => {
                     value={formData.changeDetails}
                     onChange={handleChange}
                   />
+                  {isFormSubmitted && formData.changeDetails === "" && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
-                <Form.Group controlId="changeDate" className="mb-1">
-                  <Form.Label>Change Date:</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="changeDate"
-                    value={formData.changeDate.split("T")[0]}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                <Form.Group controlId="approvedByEmpId" className="mb-1">
-                  <Form.Label>Employee:</Form.Label>
-                  <select
-                    className="form-select"
-                    name="approvedByEmpId"
-                    value={formData.approvedByEmpId}
-                    onChange={handleChange}
-                  >
-                    {empList.map((emp) => {
-                      return (
-                        <option key={emp.empId} value={emp.empId}>
-                          {emp.empName}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </Form.Group>
-                {formData.projectChangeId === 0 ? (
-                  <Button variant="primary" type="submit" className="mt-2">
-                    Submit
-                  </Button>
-                ) : (
-                  <Button variant="warning" type="submit" className="mt-2">
-                    Update
-                  </Button>
-                )}
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                Close
+              {formData.projectChangeId === 0 ? (
+                <Button variant="primary" className="mt-2" onClick={handleSave}>
+                  Add
+                </Button>
+              ) : (
+                <Button
+                  variant="warning"
+                  className="mt-2"
+                  onClick={handleUpdate}
+                >
+                  Update
+                </Button>
+              )}
+              <Button variant="secondary" onClick={handleReset}>
+                Reset
               </Button>
             </Modal.Footer>
           </Modal>

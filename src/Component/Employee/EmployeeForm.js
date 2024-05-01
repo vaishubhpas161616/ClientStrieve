@@ -585,8 +585,8 @@ const EmployeeForm = () => {
                         < Button variant="warning" type="submit" onClick={handleUpdate}>Update</Button>
 
                       }
-                      <Button variant="danger" type="button" className='mx-2' onClick={haandleReset}>Cancel</Button>
-                      <Button variant="info" type="button" className='mx-2' onClick={()=>navigate(-1)}>Go To Employee Details</Button>
+                      <Button variant="secondary" type="button" className='mx-2' onClick={haandleReset}>Reset</Button>
+                      <Button variant="success" type="button" className='mx-2' onClick={()=>navigate(-1)}>Go To Employee Details</Button>
 
                     </div>
                   </div>
