@@ -115,26 +115,33 @@ const Change = () => {
     }
   };
 
-  const handleUpdate = async (event) => {
-    event.preventDefault();
+  const handleUpdate = async () => {
+    setIsFormSubmitted(true);
 
-    try {
-      const response = await axios.post(
-        "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-          },
+    if (
+      formData.changeDetails !== "" &&
+      formData.changeDate !== "" &&
+      formData.approvedByEmpId !== "" &&
+      formData.projectId !== ""
+    ) {
+      try {
+        const response = await axios.post(
+          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+            },
+          }
+        );
+        if (response.data.result) {
+          toast.success("Data inserted Successfully");
+          handleClose();
+          getAllProjectChange();
         }
-      );
-      if (response.data.result) {
-        toast.success("Data inserted Successfully");
-        handleClose();
-        getAllProjectChange();
+      } catch (error) {
+        toast.error("Error:", error);
       }
-    } catch (error) {
-      toast.error("Error:", error);
     }
   };
 
