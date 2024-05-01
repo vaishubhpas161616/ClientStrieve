@@ -222,9 +222,9 @@ const Payment = () => {
             <div className="card-header bg-info">
               <div className="row mt-2">
                 <div className="col-md-10 text-center">
-                  <h4 className="text-center">Get All Payment List</h4>
+                  <h4 className="text-start">Get All Payment List</h4>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 text-end">
                   <Button
                     variant="success"
                     className="btn-md m-1 text-right"
@@ -255,7 +255,7 @@ const Payment = () => {
                       <td>{index + 1}</td>
                       <td>{payment.projectName}</td>
                       <td>{payment.companyName}</td>
-                      <td>{payment.paymentDate}</td>
+                      <td>{payment.paymentDate.split("T")[0]}</td>
                       <td>{payment.paymentMode}</td>
                       <td>{payment.amount}</td>
                       <td>{payment.naration}</td>
@@ -266,14 +266,14 @@ const Payment = () => {
                           onClick={() => onEdit(payment)}
                         >
                           {" "}
-                          <FaEdit style={{ marginRight: "5px" }} /> Edit
+                          <FaEdit /> 
                         </Button>
                         <Button
                           variant="danger"
                           className="btn btn-col-2 btn-danger mx-2"
                           onClick={() => onDelete(payment.projectPaymentId)}
                         >
-                          <FaTrash style={{ marginRight: "5px" }} /> Delete
+                          <FaTrash /> 
                         </Button>
                       </td>
                     </tr>
