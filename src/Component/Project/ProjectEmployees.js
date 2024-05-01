@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import { FaTrash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-
+import { FaTrash } from 'react-icons/fa';
 
 const ProjectEmployees = () => {
     const [projectEmpObj, setProjectEmpObj] = useState({
         "projectEmpId": 0,
-        "employeeId": 0,
-        "projectId": 0,
+        "employeeId": '',
+        "projectId": '',
         "addedDate": ""
     });
     const [allEmployee, setAllEmployee] = useState([]);
     const [allProjects, setAllProjects] = useState([]);
     const [allProjjectEmployees, setAllProjjectEmployees] = useState([]);
-
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         getAllEmp();
@@ -27,9 +25,8 @@ const ProjectEmployees = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProjectEmpObj((prevObj) => ({ ...prevObj, [name]: value }));
+        setErrors({ ...errors, [name]: '' }); // Clear the error message when the field value changes
     };
-
-
 
     const getAllEmp = async () => {
         try {
@@ -73,19 +70,17 @@ const ProjectEmployees = () => {
     const handleSave = async () => {
         if (IsValidate()) {
             try {
-                debugger;
                 const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddEmployeeToProject", projectEmpObj, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('loginToken')}`
                     }
                 });
-                debugger;
                 if (response.data.result) {
-                    toast.success("Data Inserted Successfully");
+                    Swal.fire('Success!', 'Data Inserted Successfully', 'success');
                     handleReset();
                     getAllEmpWorkOnProject();
                 } else {
-                    toast.error(response.message);
+                    Swal.fire('Error!', response.message, 'error');
                 }
             } catch (error) {
                 console.error('Error saving data:', error);
@@ -93,11 +88,8 @@ const ProjectEmployees = () => {
         }
     };
 
-
-
     const handleDeleteData = async (id) => {
         try {
-
             const confirmation = await Swal.fire({
                 title: 'Are you sure?',
                 text: 'You will not be able to recover this data!',
@@ -115,17 +107,9 @@ const ProjectEmployees = () => {
                     }
                 });
                 if (response.data.data) {
-                    Swal.fire(
-                        'Error!',
-                        response.data.data,
-                        'error'
-                    );
+                    Swal.fire('Error!', response.data.data, 'error');
                 } else {
-                    Swal.fire(
-                        'Success!',
-                        response.data.message,
-                        'success'
-                    );
+                    Swal.fire('Success!', response.data.message, 'success');
                     getAllEmpWorkOnProject();
                 }
             }
@@ -137,41 +121,35 @@ const ProjectEmployees = () => {
     const handleReset = () => {
         setProjectEmpObj({
             "projectEmpId": 0,
-            "employeeId": 0,
-            "projectId": 0,
+            "employeeId": '',
+            "projectId": '',
             "addedDate": ""
         });
+        setErrors({});
     };
 
     const IsValidate = () => {
         let isProceed = true;
-        let errorMessage = "Please enter/select a value for ";
+        let newErrors = {};
 
-        // Check if employeeId is selected
-        if (projectEmpObj.employeeId === '' || projectEmpObj.employeeId === null) {
+        if (!projectEmpObj.employeeId) {
+            newErrors = { ...newErrors, employeeId: 'Please select an Employee' };
             isProceed = false;
-            errorMessage += 'Employee, ';
         }
 
-        // Check if projectId is selected
-        if (projectEmpObj.projectId === '' || projectEmpObj.projectId === null) {
+        if (!projectEmpObj.projectId) {
+            newErrors = { ...newErrors, projectId: 'Please select a Project' };
             isProceed = false;
-            errorMessage += 'Project, ';
         }
 
-        // Check if addedDate is selected
-        if (projectEmpObj.addedDate === '' || projectEmpObj.addedDate === null) {
+        if (!projectEmpObj.addedDate) {
+            newErrors = { ...newErrors, addedDate: 'Please select an Added Date' };
             isProceed = false;
-            errorMessage += 'Added Date, ';
         }
 
-        if (!isProceed) {
-            toast.warning(errorMessage.slice(0, -2));
-        }
-
+        setErrors(newErrors);
         return isProceed;
     };
-
 
     return (
         <>
@@ -200,7 +178,7 @@ const ProjectEmployees = () => {
                                                     <td>{item.projectName}</td>
                                                     <td>{item.addedDate}</td>
                                                     <td>
-                                                        <button className='btn btn-danger' onClick={() => handleDeleteData(item.projectEmpId)}><FaTrash style={{ marginRight: '5px' }} />Delete</button>
+                                                        <button className='btn btn-danger' onClick={() => handleDeleteData(item.projectEmpId)}><FaTrash /></button>
                                                     </td>
                                                 </tr>
                                             )
@@ -218,19 +196,7 @@ const ProjectEmployees = () => {
                         </div>
                         <div className="card-body">
                             <Row>
-                                <Col>
-                                    <Form.Group controlId="projectDetails">
-                                        <Form.Label>Select Employees</Form.Label>
-                                        <select className='form-select' name="employeeId" value={projectEmpObj.employeeId} onChange={handleChange}>
-                                            <option value="">Select Employee</option>
-                                            {allEmployee.map((emp) => (
-                                                <option key={emp.empId} value={emp.empId}>
-                                                    {emp.empName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </Form.Group>
-                                </Col>
+                                
                                 <Col>
                                     <Form.Group controlId="clientId">
                                         <Form.Label>Project Name</Form.Label>
@@ -242,7 +208,21 @@ const ProjectEmployees = () => {
                                                 </option>
                                             ))}
                                         </select>
-
+                                        <Form.Text className="text-danger">{errors.projectId}</Form.Text>
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group controlId="projectDetails">
+                                        <Form.Label>Select Employees</Form.Label>
+                                        <select className='form-select' name="employeeId" value={projectEmpObj.employeeId} onChange={handleChange}>
+                                            <option value="">Select Employee</option>
+                                            {allEmployee.map((emp) => (
+                                                <option key={emp.empId} value={emp.empId}>
+                                                    {emp.empName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <Form.Text className="text-danger">{errors.employeeId}</Form.Text>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -250,29 +230,25 @@ const ProjectEmployees = () => {
                                 <Col>
                                     <Form.Group controlId="addedDate">
                                         <Form.Label>Added Date</Form.Label>
-                                        <Form.Control type="datetime-local" name="addedDate" value={projectEmpObj.addedDate} onChange={handleChange} />
+                                        <Form.Control type="date" name="addedDate" value={projectEmpObj.addedDate} onChange={handleChange} />
+                                        <Form.Text className="text-danger">{errors.addedDate}</Form.Text>
                                     </Form.Group>
                                 </Col>
                             </Row>
                             <Row className='mt-2'>
                                 <Col>
-
                                     <Button variant="primary" type="submit" className='mx-2' onClick={handleSave}>
                                         Submit
                                     </Button>
-
                                     <Button variant="danger" onClick={handleReset}>
                                         Reset
                                     </Button>
-
                                 </Col>
                             </Row>
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </>
     );
 };

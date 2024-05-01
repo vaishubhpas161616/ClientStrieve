@@ -12,7 +12,7 @@ import ProjectEmployees from '../Project/ProjectEmployees.js';
 
 const Layout = () => {
     return (
-        <div className='container-fluid'>
+        <div className='container-fluid '>
             <Navbar/>
             <div className="content">
                 <Routes>

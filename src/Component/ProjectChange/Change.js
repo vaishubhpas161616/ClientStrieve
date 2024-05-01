@@ -155,11 +155,11 @@ const Change = () => {
               <div className="card-header bg-info">
                 <div className="row mt-2">
                   <div className="col-md-10 text-start">
-                    Get All Project Change List
+                    <h4 className="text-center">Get All Project Change List</h4>
                   </div>
                   <div className="col-md-2 text-end">
                     <Button
-                      variant="primary"
+                      variant="success"
                       className="btn-md m-1 text-right"
                       onClick={handleShow}
                     >

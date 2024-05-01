@@ -81,7 +81,7 @@ const Project = () => {
     };
 
     const handleSave = async () => {
-        if (IsValidate()) {
+        if (validateForm()) {
 
             try {
                 const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClientProject", formData, {
@@ -92,7 +92,7 @@ const Project = () => {
                 if (response.data.result) {
                     toast.success("Project added successfully");
                     handleReset();
-                   handleCloseModal();
+                    handleCloseModal();
 
                 } else {
                     toast.error(response.data.message);
@@ -106,20 +106,22 @@ const Project = () => {
     };
 
     const handleUpdate = async () => {
-        try {
-            
-            const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClientProject", formData);
-            if (response.data.result) {
-                toast.success("Project added successfully");
-                handleReset();
-                handleCloseModal();
-                getAllProjects();
-            } else {
-                toast.error(response.data.message);
+        if (validateForm()) {
+            try {
+
+                const response = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateClientProject", formData);
+                if (response.data.result) {
+                    toast.success("Project added successfully");
+                    handleReset();
+                    handleCloseModal();
+                    getAllProjects();
+                } else {
+                    toast.error(response.data.message);
+                }
+            } catch (error) {
+                console.error('Error adding project:', error);
+                toast.error('Error adding project');
             }
-        } catch (error) {
-            console.error('Error adding project:', error);
-            toast.error('Error adding project');
         }
     };
 
@@ -195,252 +197,283 @@ const Project = () => {
     };
 
     const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setFormErrors({
+            projectName: "",
+            startDate: "",
+            expectedEndDate: "",
+            leadByEmpId: "",
+            completedDate: "",
+            contactPerson: "",
+            contactPersonContactNo: "",
+            contactPersonEmailId: "",
+            totalEmpWorking: "",
+            projectCost: "",
+            projectDetails: "",
+            clientId: ""
+        });
+    };
 
 
-    const IsValidate = () => {
-        let isProceed = true;
-        let errorMessage = "Please enter the value in ";
+    const [formErrors, setFormErrors] = useState({
+        projectName: "",
+        startDate: "",
+        expectedEndDate: "",
+        leadByEmpId: "",
+        completedDate: "",
+        contactPerson: "",
+        contactPersonContactNo: "",
+        contactPersonEmailId: "",
+        totalEmpWorking: "",
+        projectCost: "",
+        projectDetails: "",
+        clientId: ""
+    });
+    const validateForm = () => {
+        let errors = {};
+        let isValid = true;
 
-        if (formData.projectName.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Project Name, ';
+        if (formData.projectName.trim() === "") {
+            errors.projectName = "Project Name is required";
+            isValid = false;
         }
-        if (formData.startDate.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Start Date, ';
+
+        if (formData.startDate.trim() === "") {
+            errors.startDate = "Start Date is required";
+            isValid = false;
         }
-        if (formData.expectedEndDate.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Expected End Date, ';
+
+        if (formData.expectedEndDate.trim() === "") {
+            errors.expectedEndDate = "Expected End Date is required";
+            isValid = false;
         }
-        if (formData.contactPerson.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Contact Person, ';
+
+        if (!formData.leadByEmpId) {
+            errors.leadByEmpId = "Lead By Employee ID is required";
+            isValid = false;
         }
-        if (formData.contactPersonContactNo.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Contact Person Contact No, ';
+
+        if (formData.completedDate.trim() === "") {
+            errors.completedDate = "Completed Date is required";
+            isValid = false;
         }
-        if (formData.contactPersonEmailId.trim() === '') {
-            isProceed = false;
-            errorMessage += 'Contact Person Email, ';
+
+        if (formData.contactPerson.trim() === "") {
+            errors.contactPerson = "Contact Person is required";
+            isValid = false;
+        }
+
+        if (formData.contactPersonContactNo.trim() === "") {
+            errors.contactPersonContactNo = "Contact Person Contact No is required";
+            isValid = false;
+        }
+
+        if (formData.contactPersonEmailId.trim() === "") {
+            errors.contactPersonEmailId = "Contact Person Email is required";
+            isValid = false;
         } else {
-            // Check for valid email format
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(formData.contactPersonEmailId)) {
-                isProceed = false;
-                errorMessage += 'Valid Contact Person Email, ';
+                errors.contactPersonEmailId = "Invalid Email Format";
+                isValid = false;
             }
         }
-
-        if (!isProceed) {
-            toast.warning(errorMessage.slice(0, -2)); // Remove the trailing comma and space
+        if (formData.totalEmpWorking.toString().trim() === "") {
+            errors.totalEmpWorking = "Total EmpWorking is required";
+            isValid = false;
         }
 
-        return isProceed;
+        if (formData.projectCost.toString().trim() === "") {
+            errors.projectCost = "Project Cost is required";
+            isValid = false;
+        }
+
+        if (formData.projectDetails.trim() === "") {
+            errors.projectDetails = "Project Details is required";
+            isValid = false;
+        }
+
+        if (!formData.clientId) {
+            errors.clientId = "Client Name is required";
+            isValid = false;
+        }
+
+        setFormErrors(errors);
+        return isValid;
     };
 
     return (
         <>
 
             <div className='row'>
-                <div className="col-10 offset-1">
+                <div className="col-12">
                     <div className="card bg-light">
                         <div className="card-header bg-info">
                             <div className="row mt-2">
-                                <div className="col-md-10 text-center ">
-                                    <h1 >Project Details</h1>
+                                <div className="col-md-10 text-center">
+                                    <h1>Project Details</h1>
                                 </div>
                                 <div className="col-md-2">
-                                    <Button variant="primary" onClick={handleShowModal}>
-                                        Add Project<FaPlus />
+                                    <Button variant="success" onClick={handleShowModal}>
+                                        <FaPlus /> Add Project
                                     </Button>
                                 </div>
                             </div>
                         </div>
                         <div className="card-body">
-                            <table className='table table-border table-border-stripped'>
-                                <thead>
-                                    <tr>
-                                        <th>Sr.No</th>
-                                        <th>Project Name</th>
-                                        <th>Client Name</th>
-                                        <th>Employee Name</th>
-                                        <th>Employee EmailId</th>
-                                        <th>Employee Designation</th>
-                                        <th>Start Date</th>
-                                        <th>Expected End Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {allProjects.map((project, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>{project.projectName}</td>
-                                            <td>{project.clientName}</td>
-                                            <td>{project.empName}</td>
-                                            <td>{project.empEmailId}</td>
-                                            <td>{project.empDesignation}</td>
-                                            <td>{project.startDate}</td>
-                                            <td>{project.expectedEndDate}</td>
-                                            <td>
-                                                <button className='btn btn-success mx-1' onClick={() => handleEdit(project.clientProjectId)}><FaEdit style={{ marginRight: '5px' }} />Edit</button>
-                                                <button className='btn btn-danger' onClick={() => handleDelete(project.clientProjectId)}><FaTrash style={{ marginRight: '5px' }} />Delete</button>
-                                            </td>
+                            <div className="table-responsive">
+                                <table className='table table-bordered table-striped'>
+                                    <thead>
+                                        <tr>
+                                            <th>Sr.No</th>
+                                            <th>Project Name</th>
+                                            <th>Client Name</th>
+                                            <th>Employee Name</th>
+                                            <th>Employee EmailId</th>
+                                            <th>Employee Designation</th>
+                                            <th>Start Date</th>
+                                            <th>Expected End Date</th>
+                                            <th>Action</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {allProjects.map((project, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{project.projectName}</td>
+                                                <td>{project.clientName}</td>
+                                                <td>{project.empName}</td>
+                                                <td>{project.empEmailId}</td>
+                                                <td>{project.empDesignation}</td>
+                                                <td>{project.startDate}</td>
+                                                <td>{project.expectedEndDate}</td>
+                                                <td>
+                                                    <button className='btn btn-success mx-1' onClick={() => handleEdit(project.clientProjectId)}><FaEdit /></button>
+                                                    <button className='btn btn-danger' onClick={() => handleDelete(project.clientProjectId)}><FaTrash /></button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
-                <Modal.Header closeButton>
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton className='bg-light'>
                     <Modal.Title>Add Project</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="projectName">
-                                    <Form.Label>Project Name</Form.Label>
-                                    <Form.Control type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="startDate">
-                                    <Form.Label>Start Date</Form.Label>
-                                    <Form.Control type="datetime-local" name="startDate" value={formData.startDate} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="expectedEndDate">
-                                    <Form.Label>Expected End Date</Form.Label>
-                                    <Form.Control type="datetime-local" name="expectedEndDate" value={formData.expectedEndDate} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="leadByEmpId">
-                                    <Form.Label>Lead By Employee ID</Form.Label>
-                                    <select className='form-select' name="leadByEmpId" value={formData.leadByEmpId} onChange={handleInputChange}>
-                                        <option value="">Select Employee</option>
+                    <div className='card-body'>
+                        <div className="row">
+                            <div className="col-12">
+                                <div className='row'>
+                                    <div className='col-md-6'>
+                                        <label>Client Name</label>
+                                        <select className='form-select' name="clientId" value={formData.clientId} onChange={handleInputChange}>
+                                            <option value="">Select Client</option>
+                                            {allClients.map((client) => (
+                                                <option key={client.clientId} value={client.clientId}>{client.companyName}</option>
+                                            ))}
+                                        </select>
+                                        <small className="text-danger">{formErrors.clientId}</small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label>Project Name</label>
+                                        <input type="text" value={formData.projectName} className='form-control' onChange={handleInputChange} name='projectName' placeholder='Project Name' />
+                                        <small className="text-danger">{formErrors.projectName}</small>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className='col-md-6'>
+                                        <label>Project Details</label>
+                                        <input type="text" value={formData.projectDetails} className='form-control' onChange={handleInputChange} name='projectDetails' />
+                                        <small className="text-danger">{formErrors.projectDetails}</small>
+                                    </div>
+                                    <div className='col-md-6'>
+                                        <label>Project Cost</label>
+                                        <input type="number" value={formData.projectCost} className='form-control' onChange={handleInputChange} name='projectCost' />
+                                        <small className="text-danger">{formErrors.projectCost}</small>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className='col-md-6'>
+                                        <label>Contact Person</label>
+                                        <input type="text" value={formData.contactPerson} className='form-control' onChange={handleInputChange} name='contactPerson' />
+                                        <small className="text-danger">{formErrors.contactPerson}</small>
+                                    </div>
+                                    <div className='col-md-6'>
+                                        <label>Contact Person Contact No</label>
+                                        <input type="text" value={formData.contactPersonContactNo} className='form-control' onChange={handleInputChange} name='contactPersonContactNo' />
+                                        <small className="text-danger">{formErrors.contactPersonContactNo}</small>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className='col-md-6'>
+                                        <label>Contact Person Email</label>
+                                        <input type="email" value={formData.contactPersonEmailId} className='form-control' onChange={handleInputChange} name='contactPersonEmailId' />
+                                        <small className="text-danger">{formErrors.contactPersonEmailId}</small>
+                                    </div>
+                                    <div className='col-md-6'>
+                                        <label>Lead By Employee ID</label>
+                                        <select className='form-select' name="leadByEmpId" value={formData.leadByEmpId} onChange={handleInputChange}>
+                                            <option value="">Select Employee</option>
+                                            {allEmployees.map((emp) => (
+                                                <option key={emp.empId} value={emp.empId}>{emp.empName}</option>
+                                            ))}
+                                        </select>
+                                        <small className="text-danger">{formErrors.leadByEmpId}</small>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className='col-md-6'>
+                                        <label>Total EmpWorking</label>
+                                        <input type="number" value={formData.totalEmpWorking} className='form-control' onChange={handleInputChange} name='totalEmpWorking' />
+                                        <small className="text-danger">{formErrors.totalEmpWorking}</small>
+                                    </div>
+                                    <div className='col-md-6'>
+                                        <label>Start Date</label>
+                                        <input type="datetime-local" value={formData.startDate} className='form-control' onChange={handleInputChange} name='startDate' />
+                                        <small className="text-danger">{formErrors.startDate}</small>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className='col-md-6'>
+                                        <label>Expected End Date</label>
+                                        <input type="datetime-local" value={formData.expectedEndDate} className='form-control' onChange={handleInputChange} name='expectedEndDate' />
+                                        <small className="text-danger">{formErrors.expectedEndDate}</small>
+                                    </div>
+                                    <div className='col-md-6'>
+                                        <label>Completed Date</label>
+                                        <input type="datetime-local" value={formData.completedDate} className='form-control' onChange={handleInputChange} name='completedDate' />
+                                        <small className="text-danger">{formErrors.completedDate}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                        {
-                                            allEmployees.map((emp) => {
-                                                return (
-                                                    <option key={emp.empId} value={emp.empId}>
-                                                        {emp.empName}
-                                                    </option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="completedDate">
-                                    <Form.Label>Completed Date</Form.Label>
-                                    <Form.Control type="datetime-local" name="completedDate" value={formData.completedDate} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="contactPerson">
-                                    <Form.Label>Contact Person</Form.Label>
-                                    <Form.Control type="text" name="contactPerson" value={formData.contactPerson} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="contactPersonContactNo">
-                                    <Form.Label>Contact Person Contact No</Form.Label>
-                                    <Form.Control type="text" name="contactPersonContactNo" value={formData.contactPersonContactNo} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="contactPersonEmailId">
-                                    <Form.Label>Contact Person Email</Form.Label>
-                                    <Form.Control type="email" name="contactPersonEmailId" value={formData.contactPersonEmailId} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="totalEmpWorking">
-                                    <Form.Label>Total EmpWorking</Form.Label>
-                                    <Form.Control type="number" name="totalEmpWorking" value={formData.totalEmpWorking} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="projectCost">
-                                    <Form.Label>Project Cost</Form.Label>
-                                    <Form.Control type="number" name="projectCost" value={formData.projectCost} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Group controlId="projectDetails">
-                                    <Form.Label>Project Details</Form.Label>
-                                    <Form.Control type="text" name="projectDetails" value={formData.projectDetails} onChange={handleInputChange} />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group controlId="clientId">
-                                    <Form.Label>Client Name</Form.Label>
-                                    <select className='form-select' name="clientId" value={formData.clientId} onChange={handleInputChange}>
-                                        <option value="">Select Client</option>
-                                        {
-                                            allClients.map((client) => {
-                                                return (
-                                                    <option key={client.clientId} value={client.clientId}>
-                                                        {client.companyName}
-                                                    </option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        <Row className='mt-2'>
-                            <Col>
-                                {
-                                    formData.clientProjectId === 0 &&
-                                    <Button variant="primary" className='mx-2' onClick={handleSave}>
-                                        {loading ? 'Saving...' : 'Submit'}
-                                    </Button>
-                                }
-                                {
-                                    formData.clientProjectId !== 0 &&
-                                    <Button variant="warning" className='mx-2' onClick={handleUpdate}>
-                                        {loading ? 'Saving...' : 'Update'}
-                                    </Button>
-                                }
-
-                            </Col>
-
-                        </Row>
-                    </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleReset}>
-                        Reset
-                    </Button>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Cancel
-                    </Button>
+                    <div className="col-12 text-center">
+                        {formData.clientProjectId === 0 && (
+                            <button type='button' className='btn btn-sm btn-primary m-2' onClick={handleSave}>
+                                {loading ? 'Saving...' : 'Submit'}
+                            </button>
+                        )}
+                        {formData.clientProjectId !== 0 && (
+                            <button type='button' className='btn btn-sm btn-warning m-2' onClick={handleUpdate}>
+                                {loading ? 'Saving...' : 'Update'}
+                            </button>
+                        )}
+                        <button type='button' className='btn btn-sm btn-secondary' onClick={handleReset} >Reset</button>
+                    </div>
                 </Modal.Footer>
             </Modal>
+
         </>
     );
 };
