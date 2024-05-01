@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash , FaEye} from "react-icons/fa";
 import Swal from "sweetalert2";
 import Spinner from "react-bootstrap/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const Project = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [allClients, setAllClients] = useState([]);
@@ -191,6 +193,11 @@ const Project = () => {
     }
   };
 
+  const handleView = (projectId) => {
+
+    navigate(`/projectDetails/${projectId}`);
+  }
+
   const handleReset = () => {
     setFormData({
       clientProjectId: 0,
@@ -318,6 +325,14 @@ const Project = () => {
                           <td>{project.startDate.split("T")[0]}</td>
                           <td>{project.expectedEndDate.split("T")[0]}</td>
                           <td>
+                            <button
+                              className="btn btn-col-1 btn-primary mx-2"
+                              onClick={() =>
+                                handleView(project.clientProjectId)
+                              }
+                            >
+                              <FaEye />
+                            </button>
                             <button
                               className="btn btn-col-1 btn-primary mx-2"
                               onClick={() =>
