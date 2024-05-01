@@ -5,11 +5,13 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import Spinner from "react-bootstrap/Spinner";
 
 const Meeting = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [getMeetingsList, setGetMeetingsList] = useState([]);
   const [getmeetingsByProjectId, setgetmeetingsByProjectId] = useState([]);
   const [addUpdateProjectMeeting, setaddUpdateProjectMeeting] = useState({
@@ -77,6 +79,7 @@ const Meeting = () => {
   };
 
   const getAllMeetings = async () => {
+    setIsLoading(true);
     try {
       const result = await axios.get(
         "https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetings",
@@ -87,6 +90,7 @@ const Meeting = () => {
         }
       );
       setGetMeetingsList(result.data.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching meetings:", error);
     }
@@ -267,9 +271,9 @@ const Meeting = () => {
               <div className="card-header bg-info">
                 <div className="row mt-2">
                   <div className="col-md-10 text-center ">
-                    <h4 className="text-center">Get All Metting List</h4>
+                    <h4 className="text-start">Get All Metting List</h4>
                   </div>
-                  <div className="col-md-2">
+                  <div className="col-md-2 text-end">
                     <React.Fragment>
                       <Button
                         variant="success"
@@ -293,46 +297,65 @@ const Meeting = () => {
                       <th>Meeting Medium</th>
                       {/* <th>RecordingUrl</th>
                                             <th>Meeting Notes</th> */}
-                      <th>Client Person Names</th>
+                      <th>Client Person</th>
                       <th>Meeting Title</th>
                       <th>Meeting Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {getMeetingsList.map((meeting, index) => (
-                      <tr key={index + 1}>
-                        <td>{index + 1}</td>
-                        <td>{meeting.meetingDate}</td>
-                        <td>{meeting.startTime}</td>
-                        <td>{meeting.endTime}</td>
-                        <td>{meeting.meetingMedium}</td>
-                        {/* <td>{meeting.recordingUrl}</td>
+                    {isLoading ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ height: 200 }}
+                      >
+                        <Button variant="primary" disabled>
+                          <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                          Loading...
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        {getMeetingsList.map((meeting, index) => (
+                          <tr key={index + 1}>
+                            <td>{index + 1}</td>
+                            <td>{meeting.meetingDate.split("T")[0]}</td>
+                            <td>{meeting.startTime}</td>
+                            <td>{meeting.endTime}</td>
+                            <td>{meeting.meetingMedium}</td>
+                            {/* <td>{meeting.recordingUrl}</td>
                                                 <td>{meeting.meetingNotes}</td> */}
-                        <td>{meeting.clientPersonNames}</td>
-                        <td>{meeting.meetingTitle}</td>
-                        <td>{meeting.meetingStatus}</td>
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-col-2 btn-primary mx-2"
-                            onClick={() => editMeeting(meeting)}
-                          >
-                            <FaEdit style={{ marginRight: "5px" }} /> Edit{" "}
-                            {/* Adjust margin as needed */}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-col-2 btn-danger mx-2"
-                            onClick={() => {
-                              OnDelete(meeting.projectId);
-                            }}
-                          >
-                            <FaTrash style={{ marginRight: "5px" }} /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                            <td>{meeting.clientPersonNames}</td>
+                            <td>{meeting.meetingTitle}</td>
+                            <td>{meeting.meetingStatus}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-col-2 btn-primary mx-2"
+                                onClick={() => editMeeting(meeting)}
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-col-2 btn-danger mx-2"
+                                onClick={() => {
+                                  OnDelete(meeting.projectId);
+                                }}
+                              >
+                                <FaTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    )}
                   </tbody>
                 </table>
               </div>

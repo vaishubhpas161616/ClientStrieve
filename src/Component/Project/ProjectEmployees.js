@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
+import Spinner from "react-bootstrap/Spinner";
 
 const ProjectEmployees = () => {
   const [projectEmpObj, setProjectEmpObj] = useState({
@@ -15,6 +16,7 @@ const ProjectEmployees = () => {
   const [allEmployee, setAllEmployee] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
   const [allProjjectEmployees, setAllProjjectEmployees] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getAllEmp();
@@ -44,6 +46,7 @@ const ProjectEmployees = () => {
   };
 
   const getAllEmpWorkOnProject = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         "https://freeapi.gerasim.in/api/ClientStrive/GetAllProjectsEmployees",
@@ -54,6 +57,7 @@ const ProjectEmployees = () => {
         }
       );
       setAllProjjectEmployees(response.data.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching employees working on projects:", error);
     }
@@ -179,37 +183,58 @@ const ProjectEmployees = () => {
         <div className="col-5 offset-1">
           <div className="card bg-light">
             <div className="crad-header bg-info p-2">
-              <h4 className="text-center">Project Lead Employees</h4>
+              <h4 className="text-start">Project Lead Employees</h4>
             </div>
             <div className="card-body">
               <table className="table table-bordered ">
                 <thead>
                   <tr>
-                    <th>Employee Name</th>
-                    <th>Project Name</th>
+                    <th>Employee</th>
+                    <th>Project</th>
                     <th>Added Date</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {allProjjectEmployees.map((item) => {
-                    return (
-                      <tr key={item.projectEmpId}>
-                        <td>{item.empName}</td>
-                        <td>{item.projectName}</td>
-                        <td>{item.addedDate}</td>
-                        <td>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteData(item.projectEmpId)}
-                          >
-                            <FaTrash style={{ marginRight: "5px" }} />
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {isLoading ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: 200 }}
+                    >
+                      <Button variant="primary" disabled>
+                        <Spinner
+                          as="span"
+                          animation="grow"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        Loading...
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      {allProjjectEmployees.map((item) => {
+                        return (
+                          <tr key={item.projectEmpId}>
+                            <td>{item.empName}</td>
+                            <td>{item.projectName}</td>
+                            <td>{item.addedDate.split("T")[0]}</td>
+                            <td>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() =>
+                                  handleDeleteData(item.projectEmpId)
+                                }
+                              >
+                                <FaTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -218,7 +243,7 @@ const ProjectEmployees = () => {
         <div className="col-5">
           <div className="card bg-light">
             <div className="card-header bg-info p-2">
-              <h4 className=" text-center">Project Employee Form</h4>
+              <h4 className=" text-start">Project Employee Form</h4>
             </div>
             <div className="card-body">
               <Row>

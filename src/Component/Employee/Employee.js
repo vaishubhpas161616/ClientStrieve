@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "react-bootstrap";
+import Spinner from 'react-bootstrap/Spinner';
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
@@ -10,12 +11,14 @@ import Swal from "sweetalert2";
 const Employee = () => {
   const navigate = useNavigate();
   const [empList, setEmpList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getAllEmp();
   }, []);
 
   const getAllEmp = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         "https://freeapi.gerasim.in/api/ClientStrive/GetAllEmployee",
@@ -26,6 +29,7 @@ const Employee = () => {
         }
       );
       setEmpList(response.data.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching employees:", error);
     }
@@ -83,9 +87,9 @@ const Employee = () => {
             <div className="card-header bg-info">
               <div className="row mt-2">
                 <div className="col-md-10 text-center">
-                  <h4 className="text-center">Get All Employee List</h4>
+                  <h4 className="text-start">Get All Employee List</h4>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 text-end">
                   <Button
                     variant="success"
                     className="btn-md m-1 text-right"
@@ -112,6 +116,23 @@ const Employee = () => {
                   </tr>
                 </thead>
                 <tbody>
+                 { isLoading ? 
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ height: 200 }}
+                  >
+                    <Button variant="primary" disabled>
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                      Loading...
+                    </Button>
+                  </div>
+                  : <>
                   {empList.map((emp, index) => (
                     <tr key={emp.empId}>
                       <td>{index + 1}</td>
@@ -125,20 +146,19 @@ const Employee = () => {
                           className="btn btn-col-2 btn-primary mx-2"
                           onClick={() => handleEditForm(emp.empId)}
                         >
-                          {" "}
-                          <FaEdit style={{ marginRight: "5px" }} />
-                          Edit
+                          <FaEdit />
                         </button>
                         <button
                           className="btn btn-col-2 btn-danger mx-2"
                           onClick={() => handleDelete(emp.empId)}
                         >
-                          <FaTrash style={{ marginRight: "5px" }} />
-                          Delete
+                          <FaTrash />
                         </button>
                       </td>
                     </tr>
                   ))}
+                  </>
+                  }
                 </tbody>
               </table>
             </div>
