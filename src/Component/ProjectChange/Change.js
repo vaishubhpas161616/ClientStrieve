@@ -10,6 +10,7 @@ const Change = () => {
   const [empList, setEmpList] = useState([]);
   const [clientProjectList, setClientProjectList] = useState([]);
   const [projectChangeList, setProjectChangeList] = useState([]);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     projectChangeId: 0,
     projectId: 0,
@@ -24,10 +25,6 @@ const Change = () => {
     handleReset();
   };
 
-  const onResetClick = () => {
-    handleReset();
-  };
-
   const handleShow = () => setShow(true);
 
   const handleChange = (event) => {
@@ -36,6 +33,7 @@ const Change = () => {
   };
 
   const handleReset = () => {
+    setIsFormSubmitted(false);
     setFormData({
       projectChangeId: 0,
       projectId: 0,
@@ -87,7 +85,37 @@ const Change = () => {
     getAllProjectChange();
   }, []);
 
-  const handleSubmit = async (event) => {
+  const handleSave = async () => {
+    setIsFormSubmitted(true);
+
+    if (
+      formData.changeDetails !== "" &&
+      formData.changeDate !== "" &&
+      formData.approvedByEmpId !== "" &&
+      formData.projectId !== ""
+    ) {
+      try {
+        const response = await axios.post(
+          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectChange",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+            },
+          }
+        );
+        if (response.data.result) {
+          toast.success("Data inserted Successfully");
+          handleClose();
+          getAllProjectChange();
+        }
+      } catch (error) {
+        toast.error("Error:", error);
+      }
+    }
+  };
+
+  const handleUpdate = async (event) => {
     event.preventDefault();
 
     try {
@@ -149,8 +177,6 @@ const Change = () => {
       }
     }
   };
-
-  
 
   return (
     <>
@@ -231,7 +257,7 @@ const Change = () => {
               <Modal.Title>Project Change</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form onSubmit={handleSubmit}>
+              <Form>
                 <Form.Group controlId="projectId" className="mb-1">
                   <Form.Label>Select Project:</Form.Label>
                   <select
@@ -252,6 +278,9 @@ const Change = () => {
                       );
                     })}
                   </select>
+                  {isFormSubmitted && formData.projectId === 0 && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
                 <Form.Group controlId="changeDetails" className="mb-1">
                   <Form.Label>Change Details:</Form.Label>
@@ -262,6 +291,9 @@ const Change = () => {
                     value={formData.changeDetails}
                     onChange={handleChange}
                   />
+                  {isFormSubmitted && formData.changeDetails === "" && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
                 <Form.Group controlId="changeDate" className="mb-1">
                   <Form.Label>Change Date:</Form.Label>
@@ -271,6 +303,9 @@ const Change = () => {
                     value={formData.changeDate.split("T")[0]}
                     onChange={handleChange}
                   />
+                  {isFormSubmitted && formData.changeDate === "" && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
                 <Form.Group controlId="approvedByEmpId" className="mb-1">
                   <Form.Label>Select Employee:</Form.Label>
@@ -289,20 +324,27 @@ const Change = () => {
                       );
                     })}
                   </select>
+                  {isFormSubmitted && formData.approvedByEmpId === 0 && (
+                    <div className="text-danger">This field is required.</div>
+                  )}
                 </Form.Group>
               </Form>
             </Modal.Body>
             <Modal.Footer>
               {formData.projectChangeId === 0 ? (
-                <Button variant="primary" type="submit" className="mt-2">
+                <Button variant="primary" className="mt-2" onClick={handleSave}>
                   Submit
                 </Button>
               ) : (
-                <Button variant="warning" type="submit" className="mt-2">
+                <Button
+                  variant="warning"
+                  className="mt-2"
+                  onClick={handleUpdate}
+                >
                   Update
                 </Button>
               )}
-              <Button variant="secondary" onClick={onResetClick}>
+              <Button variant="secondary" onClick={handleReset}>
                 Reset
               </Button>
             </Modal.Footer>
