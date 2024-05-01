@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
+import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
@@ -26,6 +27,23 @@ const Meeting = () => {
     meetingTitle: "",
     meetingStatus: "",
   });
+
+
+  const [selectedOption, setSelectedOption] = useState('');
+
+  const options = ['Draft', 'Scheduled', 'Completed'];
+
+  const handleDropdownChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setaddUpdateProjectMeeting({
+      ...addUpdateProjectMeeting,
+      [name]: value
+    });
+  };
 
   // State variables for holding error messages
   const [errors, setErrors] = useState({
@@ -137,33 +155,28 @@ const Meeting = () => {
   };
 
   const SaveMeeting = async () => {
-    debugger;
     if (validateForm()) {
       try {
-        const result = await axios.post(
-          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
-          addUpdateProjectMeeting,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-            },
+        debugger;
+        const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
+          addUpdateProjectMeeting, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
           }
-        );
-        if (result.data.data) {
-          Swal.fire(" Meeting add Success!", result.data.data, "success");
-          getAllMeetings();
-          handleClose();
+        });
+        if (result.data.result) {
+          toast.success("Data saved successfully");
+          // Reset form data after saving
+
         } else {
-          alert(result.data.message);
-          getAllMeetings();
+          toast.error(result.data.message);
         }
       } catch (error) {
-        console.error("Error saving Meeting:", error);
+        console.error("Error:", error);
+        toast.error("An error occurred while saving data");
       }
-      return;
     }
   };
-
   const editMeeting = (meeting) => {
     setaddUpdateProjectMeeting(meeting);
     handleShow();
@@ -341,11 +354,16 @@ const Meeting = () => {
                           <div className="row">
                             <div className="col-md-6">
                               <label>Project Id</label>
-                              <select
-                                name="projecId"
-                                id=""
-                                className="form-control"
-                              ></select>
+                              <select className='form-select' name="roleId" value={addUpdateProjectMeeting.projectId} onChange={handleChange}>
+                                <option>Seletct Project</option>
+                                {
+                                  getmeetingsByProjectId.map((peoject) => {
+                                    return (
+                                      <option key={peoject.projectId} value={peoject.projectId}>{peoject.ProjectName}</option>
+                                    )
+                                  })
+                                }
+                              </select>
                             </div>
                             <div className="col-md-6">
                               <label>Meeting Lead By EmpId</label>
@@ -512,22 +530,17 @@ const Meeting = () => {
                           <div className="row">
                             <div className="col-md-6">
                               <label htmlFor="">Meeting status</label>
-                              <input
-                                type="text"
-                                value={addUpdateProjectMeeting.meetingStatus}
-                                className="form-control"
-                                onChange={(event) =>
-                                  onChangeAddUpdateMeeting(
-                                    event,
-                                    "meetingStatus"
-                                  )
-                                }
-                                name="meetingStatus"
-                                placeholder="Meeting Status"
-                              />
-                              <small className="text-danger">
+                              <select id="dropdown" className="form-control" value={selectedOption} onChange={handleDropdownChange}>
+                                {/* Mapping through options to generate dropdown options */}
+                                {options.map((option, index) => (
+                                  <option key={index} value={option}>
+                                    {option}
+                                  </option>
+                                ))}
+                              </select>
+                              {/*<small className="text-danger">
                                 {errors.meetingStatus}
-                              </small>
+                              </small>*/}
                             </div>
                             <div className="col-md-6">
                               <label htmlFor="">IsRecording Available</label>
