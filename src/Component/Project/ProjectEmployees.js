@@ -180,7 +180,7 @@ const ProjectEmployees = () => {
   return (
     <>
       <div className="row">
-        <div className="col-5 offset-1">
+        <div className="col-6">
           <div className="card bg-light">
             <div className="crad-header bg-info p-2">
               <h4 className="text-start">Project Lead Employees</h4>
@@ -240,7 +240,7 @@ const ProjectEmployees = () => {
             </div>
           </div>
         </div>
-        <div className="col-5">
+        <div className="col-6">
           <div className="card bg-light">
             <div className="card-header bg-info p-2">
               <h4 className=" text-start">Project Employee Form</h4>

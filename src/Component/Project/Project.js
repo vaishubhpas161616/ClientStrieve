@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaPlus, FaEdit, FaTrash , FaEye} from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
@@ -265,7 +265,8 @@ const Project = () => {
   return (
     <>
       <div className="row">
-        <div className="col-10 offset-1">
+        <div className="col-md-1"></div>
+        <div className="col-md-12">
           <div className="card bg-light">
             <div className="card-header bg-info">
               <div className="row mt-2">
