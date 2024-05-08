@@ -21,8 +21,8 @@ const Login = ({ setLoggedIn }) => {
     e.preventDefault();
     try {
       const loginObj = {
-        "password": 112233,
-        "username": "admin"
+        "password": password,
+        "username": emailId
       }
       const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/login", loginObj);
       if (result.data.data.token) {
