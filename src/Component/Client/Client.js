@@ -477,7 +477,7 @@ const Client = () => {
             </Modal.Body>
             <Modal.Footer>
               <div className="col-12 text-center">
-                {addUpdateClient.clientId == 0 && (
+                {addUpdateClient.clientId === 0 && (
                   <button
                     type="button"
                     className="btn btn-sm btn-primary m-2"
@@ -486,7 +486,7 @@ const Client = () => {
                     Add
                   </button>
                 )}
-                {addUpdateClient.clientId != 0 && (
+                {addUpdateClient.clientId !== 0 && (
                   <button
                     type="button"
                     className="btn btn-sm btn-warning m-2"
