@@ -4,11 +4,13 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import Spinner from "react-bootstrap/Spinner";
 
 const Meeting = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [getMeetingsList, setGetMeetingsList] = useState([]);
   const [getmeetingsByProjectId, setgetmeetingsByProjectId] = useState([]);
   const [addUpdateProjectMeeting, setaddUpdateProjectMeeting] = useState({
@@ -26,6 +28,23 @@ const Meeting = () => {
     meetingTitle: "",
     meetingStatus: "",
   });
+
+
+  const [selectedOption, setSelectedOption] = useState('');
+
+  const options = ['Draft', 'Scheduled', 'Completed'];
+
+  const handleDropdownChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setaddUpdateProjectMeeting({
+      ...addUpdateProjectMeeting,
+      [name]: value
+    });
+  };
 
   // State variables for holding error messages
   const [errors, setErrors] = useState({
@@ -58,7 +77,10 @@ const Meeting = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [key]: "" }));
   };
 
+  
+
   const getAllMeetings = async () => {
+    setIsLoading(true);
     try {
       const result = await axios.get(
         "https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetings",
@@ -69,19 +91,16 @@ const Meeting = () => {
         }
       );
       setGetMeetingsList(result.data.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching meetings:", error);
     }
-  };
-  const handleChange = (event) => {
-    const { name, value } = event.target.value;
-    setaddUpdateProjectMeeting({ ...addUpdateProjectMeeting, [name]: value });
   };
 
   const getAllMeetingsByProjectId = async () => {
     try {
       const result = await axios.get(
-        "https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetingsByProjectId",
+        "https://freeapi.gerasim.in/api/ClientStrive/GetAllMeetingsByProjectId?projectId=",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
@@ -141,27 +160,22 @@ const Meeting = () => {
   };
 
   const SaveMeeting = async () => {
-    debugger;
     if (validateForm()) {
       try {
-        const result = await axios.post(
-          "https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
-          addUpdateProjectMeeting,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-            },
+        const result = await axios.post("https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting",
+          addUpdateProjectMeeting, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('loginToken')}`
           }
-        );
-        if (result.data.data) {
+        });
+        if (result.data.result) {
           Swal.fire(" Meeting add Success!", result.data.data, "success");
           getAllMeetings();
-          getAllMeetingsByProjectId();
           handleClose();
+
         } else {
           alert(result.data.message);
           getAllMeetings();
-          getAllMeetingsByProjectId();
         }
       } catch (error) {
         console.error("Error saving Meeting:", error);
@@ -169,7 +183,6 @@ const Meeting = () => {
       return;
     }
   };
-
   const editMeeting = (meeting) => {
     setaddUpdateProjectMeeting(meeting);
     handleShow();
@@ -192,32 +205,6 @@ const Meeting = () => {
       meetingTitle: "",
       meetingStatus: "",
     });
-  };
-
-  
-
-  const OnUpdate = async () => {
-    try {
-      const result = await axios.post(
-        `https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting`,
-        addUpdateProjectMeeting,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
-          },
-        }
-      );
-      if (result.data.data) {
-        Swal.fire("Success!", result.data.data, "success");
-      } else {
-        Swal.fire("Success!", result.data.message, "success");
-        getAllMeetings();
-        getAllMeetingsByProjectId();
-        handleClose();
-      }
-    } catch (error) {
-      console.error("Error deleting meeting:", error);
-    }
   };
 
   const OnDelete = async (projectId) => {
@@ -253,19 +240,42 @@ const Meeting = () => {
       }
     }
   };
+
+  const OnUpdate = async () => {
+    try {
+      const result = await axios.post(
+        `https://freeapi.gerasim.in/api/ClientStrive/AddUpdateProjectMeeting`,
+        addUpdateProjectMeeting,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("loginToken")}`,
+          },
+        }
+      );
+      if (result.data.data) {
+        Swal.fire("Success!", result.data.data, "success");
+      } else {
+        Swal.fire("Success!", result.data.message, "success");
+        getAllMeetings();
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error deleting meeting:", error);
+    }
+  };
   return (
     <div>
       <div className="container-fluid">
         <div className="row mt-3">
           <div className="col-md-1"></div>
-          <div className="col-md-10">
+          <div className="col-md-12">
             <div className="card bg-light">
               <div className="card-header bg-info">
                 <div className="row mt-2">
                   <div className="col-md-10 text-center ">
-                    <h4 className="text-center">Get All Metting List</h4>
+                    <h4 className="text-start">Get All Metting List</h4>
                   </div>
-                  <div className="col-md-2">
+                  <div className="col-md-2 text-end">
                     <React.Fragment>
                       <Button
                         variant="success"
@@ -288,47 +298,66 @@ const Meeting = () => {
                       <th>End Time</th>
                       <th>Meeting Medium</th>
                       {/* <th>RecordingUrl</th>
-                                            <th>Meeting Notes</th> */}
-                      <th>Client Person Names</th>
+                      <th>Meeting Notes</th> */}
+                      <th>Client Person</th>
                       <th>Meeting Title</th>
                       <th>Meeting Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {getMeetingsList.map((meeting, index) => (
-                      <tr key={index + 1}>
-                        <td>{index + 1}</td>
-                        <td>{meeting.meetingDate}</td>
-                        <td>{meeting.startTime}</td>
-                        <td>{meeting.endTime}</td>
-                        <td>{meeting.meetingMedium}</td>
-                        {/* <td>{meeting.recordingUrl}</td>
+                    {isLoading ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ height: 200 }}
+                      >
+                        <Button variant="primary" disabled>
+                          <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                          Loading...
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        {getMeetingsList.map((meeting, index) => (
+                          <tr key={index + 1}>
+                            <td>{index + 1}</td>
+                            <td>{meeting.meetingDate.split("T")[0]}</td>
+                            <td>{meeting.startTime}</td>
+                            <td>{meeting.endTime}</td>
+                            <td>{meeting.meetingMedium}</td>
+                            {/* <td>{meeting.recordingUrl}</td>
                                                 <td>{meeting.meetingNotes}</td> */}
-                        <td>{meeting.clientPersonNames}</td>
-                        <td>{meeting.meetingTitle}</td>
-                        <td>{meeting.meetingStatus}</td>
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-col-2 btn-primary mx-2"
-                            onClick={() => editMeeting(meeting)}
-                          >
-                            <FaEdit style={{ marginRight: "5px" }} /> Edit{" "}
-                            {/* Adjust margin as needed */}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-col-2 btn-danger mx-2"
-                            onClick={() => {
-                              OnDelete(meeting.projectId);
-                            }}
-                          >
-                            <FaTrash style={{ marginRight: "5px" }} /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                            <td>{meeting.clientPersonNames}</td>
+                            <td>{meeting.meetingTitle}</td>
+                            <td>{meeting.meetingStatus}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-col-2 btn-primary mx-2"
+                                onClick={() => editMeeting(meeting)}
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-col-2 btn-danger mx-2"
+                                onClick={() => {
+                                  OnDelete(meeting.projectId);
+                                }}
+                              >
+                                <FaTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -350,45 +379,20 @@ const Meeting = () => {
                           <div className="row">
                             <div className="col-md-6">
                               <label>Project Id</label>
-                              <select
-                                className="form-select"
-                                name="projectId"
-                                value={addUpdateProjectMeeting.projectId}
-                                onChange={handleChange}
-                              >
-                                <option>Select Project</option>
-                                {getMeetingsList.map((project) => {
-                                  return (
-                                    <option
-                                      key={project.projectId}
-                                      value={project.projectId}
-                                    >
-                                      {project.projectName}
-                                    </option>
-                                  );
-                                })}
+                              <select className='form-select' name="projectId" value={addUpdateProjectMeeting.projectId} onChange={handleChange}>
+                                <option>Seletct Project</option>
+                                {
+                                  getmeetingsByProjectId.map((rol) => {
+                                    return (
+                                      <option key={rol.ProjectId} value={rol.ProjectId}>{rol.ProjectName}</option>
+                                    )
+                                  })
+                                }
                               </select>
                             </div>
                             <div className="col-md-6">
                               <label>Meeting Lead By EmpId</label>
-                              <select
-                                className="form-select"
-                                name="projectId"
-                                value={addUpdateProjectMeeting.meetingLeadByEmpId}
-                                onChange={handleChange}
-                              >
-                                <option>Select Meeting By EmpId</option>
-                                {getmeetingsByProjectId.map((empId) => {
-                                  return (
-                                    <option
-                                      key={empId.meetingLeadByEmpId}
-                                      value={empId.meetingLeadByEmpId}
-                                    >
-                                      {empId.meetingLeadByEmpId}
-                                    </option>
-                                  );
-                                })}
-                              </select>
+                              
                             </div>
                           </div>
                           <div className="row">
@@ -411,7 +415,7 @@ const Meeting = () => {
                             <div className="col-md-6">
                               <label>Satrt Time</label>
                               <input
-                                type="text"
+                                type="time"
                                 value={addUpdateProjectMeeting.startTime}
                                 className="form-control"
                                 onChange={(event) =>
@@ -429,7 +433,7 @@ const Meeting = () => {
                             <div className="col-md-6">
                               <label>End Time</label>
                               <input
-                                type="text"
+                                type="time"
                                 value={addUpdateProjectMeeting.endTime}
                                 className="form-control"
                                 onChange={(event) =>
@@ -547,22 +551,17 @@ const Meeting = () => {
                           <div className="row">
                             <div className="col-md-6">
                               <label htmlFor="">Meeting status</label>
-                              <input
-                                type="text"
-                                value={addUpdateProjectMeeting.meetingStatus}
-                                className="form-control"
-                                onChange={(event) =>
-                                  onChangeAddUpdateMeeting(
-                                    event,
-                                    "meetingStatus"
-                                  )
-                                }
-                                name="meetingStatus"
-                                placeholder="Meeting Status"
-                              />
-                              <small className="text-danger">
+                              <select id="dropdown" className="form-control" value={selectedOption} onChange={handleDropdownChange}>
+                                {/* Mapping through options to generate dropdown options */}
+                                {options.map((option, index) => (
+                                  <option key={index} value={option}>
+                                    {option}
+                                  </option>
+                                ))}
+                              </select>
+                              {/*<small className="text-danger">
                                 {errors.meetingStatus}
-                              </small>
+                              </small>*/}
                             </div>
                             <div className="col-md-6">
                               <label htmlFor="">IsRecording Available</label>
@@ -581,29 +580,33 @@ const Meeting = () => {
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <form action="">
-                  {
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-primary m-2"
-                      onClick={SaveMeeting}
-                    >
-                      Add
-                    </button>
-                  }
-                  {
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-warning m-2"
-                      onClick={OnUpdate}
-                    >
-                      Update
-                    </button>
-                  }
-                </form>
-                <button className="btn btn-sm btn-secondary" onClick={onReset}>
+              <div className="col-12 text-center">
+                {addUpdateProjectMeeting.projectId == 0 && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-primary m-2"
+                    onClick={SaveMeeting}
+                  >
+                    Add
+                  </button>
+                )}
+                {addUpdateProjectMeeting.projectId != 0 && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-warning m-2"
+                    onClick={OnUpdate}
+                  >
+                    Update
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  onClick={onReset}
+                >
                   Reset
                 </button>
+              </div>
               </Modal.Footer>
             </Modal>
           </form>
